@@ -31,17 +31,17 @@
     const double x[2] = {x1, x2}; \
     double lnE; \
     models[ispecies]->Pred(x, &lnE); \
-    return erg2J*exp(lnE); \
+    return erg2J*std::exp(lnE); \
   } \
   double ANN_##model##E_Grad(double* grad, const double x1, const double x2) { \
     using namespace ANN; \
     const double x[2] = {x1, x2}; \
     double lnE; \
     models[ispecies]->Derivative(x, &lnE, grad); \
-    const double y = erg2J*exp(lnE); \
+    const double y = erg2J*std::exp(lnE); \
     grad[0] *= y; \
     grad[1] *= y; \
-    return y; \    
+    return y; \
   }
 
 #define ANN_MODEL_MOLECULE(model, ispecies) \
@@ -60,14 +60,14 @@
     const double x[2] = {x1, x2}; \
     double lnE; \
     models[3*ispecies + 0 - 20]->Pred(x, &lnE); \
-    return erg2J*exp(lnE); \
+    return erg2J*std::exp(lnE); \
   } \
   double ANN_##model##R_Grad(double* grad, const double x1, const double x2) { \
     using namespace ANN; \
     const double x[2] = {x1, x2}; \
     double lnE; \
     models[3*ispecies + 0 - 20]->Derivative(x, &lnE, grad); \
-    const double y = erg2J*exp(lnE); \
+    const double y = erg2J*std::exp(lnE); \
     grad[0] *= y; \
     grad[1] *= y; \
     return y; \
@@ -77,14 +77,14 @@
     const double x[2] = {x1, x2}; \
     double lnE; \
     models[3*ispecies + 1 - 20]->Pred(x, &lnE); \
-    return erg2J*exp(lnE); \
+    return erg2J*std::exp(lnE); \
   } \
   double ANN_##model##V_Grad(double* grad, const double x1, const double x2) { \
     using namespace ANN; \
     const double x[2] = {x1, x2}; \
     double lnE; \
     models[3*ispecies + 1 - 20]->Derivative(x, &lnE, grad); \
-    const double y = erg2J*exp(lnE); \
+    const double y = erg2J*std::exp(lnE); \
     grad[0] *= y; \
     grad[1] *= y; \
     return y; \
@@ -94,14 +94,14 @@
     const double x[2] = {x1, x2}; \
     double lnE; \
     models[3*ispecies + 2 - 20]->Pred(x, &lnE); \
-    return erg2J*exp(lnE); \
+    return erg2J*std::exp(lnE); \
   } \
   double ANN_##model##E_Grad(double* grad, const double x1, const double x2) { \
     using namespace ANN; \
     const double x[2] = {x1, x2}; \
     double lnE; \
     models[3*ispecies + 2 - 20]->Derivative(x, &lnE, grad); \
-    const double y = erg2J*exp(lnE); \
+    const double y = erg2J*std::exp(lnE); \
     grad[0] *= y; \
     grad[1] *= y; \
     return y; \
@@ -134,7 +134,7 @@
     const double Rs = R/weight_pack[ispecies]; \
     const double x2_inv = 1.0/x2; \
     for (int ivib = 0; ivib < thetv[ispecies].size(); ivib++) { \
-      E += Rs*thetv[ispecies][ivib]/(exp(thetv[ispecies][ivib]*x2_inv) - 1.0); \
+      /*E += Rs*thetv[ispecies][ivib]/(std::exp(thetv[ispecies][ivib]*x2_inv) - 1.0);*/ \
     } \
     return E; \
   } \
@@ -146,8 +146,8 @@
     for (int ivib = 0; ivib < thetv[ispecies].size(); ivib++) { \
       const double Tratio = thetv[ispecies][ivib]/x2; \
       const double Tratio2 = Tratio*Tratio; \
-      E += Rs*thetv[ispecies][ivib]/(exp(Tratio) - 1.0); \
-      Cv += Rs*Tratio2*exp(Tratio)/((exp(Tratio) - 1.0)*(exp(Tratio) - 1.0)); \
+      /*E += Rs*thetv[ispecies][ivib]/(std::exp(Tratio) - 1.0); \
+      Cv += Rs*Tratio2*std::exp(Tratio)/((std::exp(Tratio) - 1.0)*(std::exp(Tratio) - 1.0));*/ \
     } \
     grad[0] = 0.0; \
     grad[1] = Cv; \
@@ -160,7 +160,7 @@
     double qs2 = 0.0; \
     const double x2_inv = 1.0/x2; \
     for (int iele = 0; iele < thetel[ispecies].size(); iele++) { \
-      qs = ge[ispecies][iele]*exp(-thetel[ispecies][iele]*x2_inv); \
+      /*qs = ge[ispecies][iele]*std::exp(-thetel[ispecies][iele]*x2_inv);*/ \
       qs1 += qs*thetel[ispecies][iele]; \
       qs2 += qs; \
     } \
@@ -177,11 +177,11 @@
     double qs3 = 0.0; \
     double qs4 = 0.0; \
     for (int iele = 0; iele < thetel[ispecies].size(); iele++) { \
-      qs = ge[ispecies][iele]*exp(-thetel[ispecies][iele]*x2_inv); \
+      /*qs = ge[ispecies][iele]*std::exp(-thetel[ispecies][iele]*x2_inv); \
       qs1 += qs*thetel[ispecies][iele]; \
       qs2 += qs; \
       qs3 += qs*thetel[ispecies][iele]*thetel[ispecies][iele]*x2_inv*x2_inv; \
-      qs4 += qs*thetel[ispecies][iele]*x2_inv*x2_inv; \
+      qs4 += qs*thetel[ispecies][iele]*x2_inv*x2_inv;*/ \
     } \
     const double cv = (qs3*qs2 - qs1*qs4)/qs2/qs2*Rs; \
     const double E = qs1/qs2*Rs; \
@@ -392,51 +392,33 @@ const char* ANN_Init(const char* modeldir) {
                              + std::to_string(VER_SUBMINOR) + "\n";
 
   models.resize(58);
+  // Order of models.
+  // 0 ~ 9: electronic energies of atoms
+  // 3*k + 1: rotational energies of diatomic molecules (k >= 3)
+  // 3*k + 2: vibrational energies of diatomic molecules
+  // 3*k + 3: electronic energies of diatomic molecules
 
   // Initialize models for atoms.
   int flag_cnt = 0;
   for (int ispecies = 0; ispecies < 10; ispecies++) {
-    string_buffer += species_pack[ispecies] + "T";
-    string_buffer += " (INIT SUCCESS)\n";
     models[ispecies] = std::make_shared<Model>();
     const bool init_flag = models[ispecies]->Init(header + "/" + species_pack[ispecies] + "/" + species_pack[ispecies] + mode_pack[2] + ".dat");
-    string_buffer += species_pack[ispecies] + mode_pack[2];
-    if (init_flag)
-      string_buffer += " (INIT SUCCESS)\n";
-    else
+    if (!init_flag) {
+      string_buffer += species_pack[ispecies] + mode_pack[2];
       string_buffer += " (INIT FAILURE)\n";
+    }
   }
 
   // Initialize models for diatomic molecules.
   for (int ispecies = 10; ispecies < 26; ispecies++) {
-    string_buffer += species_pack[ispecies] + "T";
-    string_buffer += " (INIT SUCCESS)\n";
     for (int imode = 0; imode < 3; imode++) {
       models[3*ispecies + imode - 20] = std::make_shared<Model>();
       const bool init_flag = models[3*ispecies + imode - 20]->Init(header + "/" + species_pack[ispecies] + "/" + species_pack[ispecies] + mode_pack[imode] + ".dat");
-      string_buffer += species_pack[ispecies] + mode_pack[imode];
-      if (init_flag)
-        string_buffer += " (INIT SUCCESS)\n";
-      else
+      if (!init_flag) {
+        string_buffer += species_pack[ispecies] + mode_pack[imode];
         string_buffer += " (INIT FAILURE)\n";
+      }
     }
-  }
-
-  // Initialize models for polyatomic molecules.
-  for (int ispecies = 26; ispecies < 36; ispecies++) {
-    string_buffer += species_pack[ispecies] + "T";
-    string_buffer += " (INIT SUCCESS)\n";
-    for (int imode = 0; imode < 3; imode++) {
-      string_buffer += species_pack[ispecies] + mode_pack[imode];
-      string_buffer += " (INIT SUCCESS)\n";
-    }
-  }
-
-  // Initialize models for electron.
-  string_buffer += species_pack[36] + "T";
-  for (int imode = 0; imode < 3; imode++) {
-    string_buffer += species_pack[36] + mode_pack[imode];
-    string_buffer += " (INIT SUCCESS)\n";
   }
 
   return string_buffer.c_str();
@@ -461,7 +443,8 @@ const char* ANN_Units(void) {
     "Units used by ANN\n"
     "Mass: kg\n"
     "Temperature: K\n"
-    "Energy per unit mass: J/kg\n";
+    "Energy per unit mass: J/kg\n"
+    "Specific Heat: J/kg-K\n"
     "\n";
 
   return string_buffer.c_str();
@@ -662,7 +645,8 @@ namespace ANN {
     {0.0000000000000E+00}, // NOp
     {0.0000000000000E+00}, // CNp
     {0.0000000000000E+00}, // COp
-    {0.0000000000000E+00, 2.0142863611443E+04, 3.0933683403288E+04, 3.4242868139454E+04, 3.5502516503155E+04, 4.1868380792357E+04, 4.7191851889667E+04, 4.7335729486892E+04, 4.8486750264689E+04, 5.8270426875961E+04}, // C3
+    {0.0000000000000E+00, 2.0142863611443E+04, 3.0933683403288E+04, 3.4242868139454E+04, 3.5502516503155E+04, 
+     4.1868380792357E+04, 4.7191851889667E+04, 4.7335729486892E+04, 4.8486750264689E+04, 5.8270426875961E+04}, // C3
     {0.0000000000000E+00, 4.3163279167378E+04, 4.7479607084116E+04, 5.1795935000854E+04, 6.4744918751068E+04}, // CO2
     {0.0000000000000E+00, 5.7551038889838E+03}, // C2H
     {0.0000000000000E+00, 4.5278279846580E+03}, // CH2

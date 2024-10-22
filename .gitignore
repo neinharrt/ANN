@@ -37,3 +37,6 @@ test
 
 # Database folder
 database/
+
+# Compile options for nvim
+compile_flags.txt
