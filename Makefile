@@ -8,7 +8,7 @@ OBJ=$(OBJ_DIR)/model_basic.o\
 
 TARGET=libann
 
-.PHONY : all clean test remake
+.PHONY : all clean test remake write
 
 all : mkobj $(TARGET)
 
@@ -17,7 +17,11 @@ mkobj :
 	-mkdir lib
 
 test : all
-	$(CC) -c main_example.cpp -o $(OBJ_DIR)/main_example.o -I./inc
+	$(CC) -c -DTEST main_example.cpp -o $(OBJ_DIR)/main_example.o -I./inc
+	$(CC) -o test $(OBJ_DIR)/main_example.o -L./lib -lann -static
+
+write : all
+	$(CC) -c -DWRITE main_example.cpp -o $(OBJ_DIR)/main_example.o -I./inc
 	$(CC) -o test $(OBJ_DIR)/main_example.o -L./lib -lann -static
 
 $(TARGET) : $(OBJ)

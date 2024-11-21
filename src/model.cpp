@@ -402,7 +402,8 @@ const char* ANN_Init(const char* modeldir) {
   int flag_cnt = 0;
   for (int ispecies = 0; ispecies < 10; ispecies++) {
     models[ispecies] = std::make_shared<Model>();
-    const bool init_flag = models[ispecies]->Init(header + "/" + species_pack[ispecies] + "/" + species_pack[ispecies] + mode_pack[2] + ".dat");
+    const std::string filedir = header + "/" + species_pack[ispecies] + "/" + species_pack[ispecies] + mode_pack[2] + ".dat";
+    const bool init_flag = models[ispecies]->Init(filedir);
     if (!init_flag) {
       string_buffer += species_pack[ispecies] + mode_pack[2];
       string_buffer += " (INIT FAILURE)\n";
@@ -412,8 +413,10 @@ const char* ANN_Init(const char* modeldir) {
   // Initialize models for diatomic molecules.
   for (int ispecies = 10; ispecies < 26; ispecies++) {
     for (int imode = 0; imode < 3; imode++) {
-      models[3*ispecies + imode - 20] = std::make_shared<Model>();
-      const bool init_flag = models[3*ispecies + imode - 20]->Init(header + "/" + species_pack[ispecies] + "/" + species_pack[ispecies] + mode_pack[imode] + ".dat");
+      const int index = 3*ispecies + imode - 20;
+      const std::string filedir = header + "/" + species_pack[ispecies] + "/" + species_pack[ispecies] + mode_pack[imode] + ".dat";
+      models[index] = std::make_shared<Model>();
+      const bool init_flag = models[index]->Init(filedir);
       if (!init_flag) {
         string_buffer += species_pack[ispecies] + mode_pack[imode];
         string_buffer += " (INIT FAILURE)\n";
