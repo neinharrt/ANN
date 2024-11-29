@@ -40,3 +40,6 @@ database/
 
 # Compile options for nvim
 compile_flags.txt
+
+# Visual Studio Code
+.vscode/
