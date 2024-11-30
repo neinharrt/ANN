@@ -247,8 +247,7 @@ const std::vector<bool> molecule_flag = {false, false, false, false, false, fals
                                          true, true, true, true, true, true, true, true, true, true,
                                          true, true, true, true, true, true, true};
 
-int main(void)
-{
+int main(void) {
   // Print the list of units used by ANN
   const char *unit_info = ANN_Units();
   std::cout << std::string(unit_info) << std::endl;
@@ -276,6 +275,26 @@ int main(void)
     0.0262301911965476
   };
   const double R = 8.31446261815324; // Universal gas constant (J/K-mol)
+
+  std::vector<std::string> species_names;
+  for (auto& species : species_pack) {
+    species_names.push_back(species.second);
+  }
+
+  // Modified model is defined and used as follow.
+  // std::vector<ANN_MODEL> models;
+  // models.resize(nspecies);
+  // const char* initlog = ANN_Init(dir, &species_names[0], &models[0]);
+  // const double et = models[i]->ComputeTranslationalEnergy(Ttr, Tve); Compute translational energy
+  // const double er = models[i]->ComputeRotationalEnergy(Ttr, Tve); Compute rotational energy
+  // const double ev = models[i]->ComputeVibrationalEnergy(Ttr, Tve); Compute vibrational energy
+  // const double ee = models[i]->ComputeElectronicEnergy(Ttr, Tve); Compute electronic energy
+  // double cvt[2], cvr[2], cvv[2], cve[2];
+  // models[i]->ComputeTranslationalCv(Ttr, Tve, &cvt[0]); Compute specific heat of translational energy
+  // models[i]->ComputeRotationalCv(Ttr, Tve, &cvr[0]); Compute specific heat of rotational energy
+  // models[i]->ComputeVibrationalCv(Ttr, Tve, &cvv[0]); Compute specific heat of vibrational energy
+  // models[i]->ComputeElectronicCv(Ttr, Tve, &cve[0]); Compute specific heat of electronic energy
+
   std::vector<ANN_DEF> fptrs;
   std::vector<ANN_GRAD_DEF> gptrs;
   fptrs.resize(4 * nspecies);
