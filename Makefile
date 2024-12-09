@@ -3,7 +3,8 @@ CC=g++
 CFALGS=-Ofast -static
 
 OBJ_DIR=obj
-OBJ=$(OBJ_DIR)/model_basic.o\
+OBJ=$(OBJ_DIR)/neural_network.o\
+		$(OBJ_DIR)/model_basic.o\
 		$(OBJ_DIR)/model.o\
 
 TARGET=libann
