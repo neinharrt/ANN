@@ -257,27 +257,66 @@ const std::vector<bool> molecule_flag = {false, false, false, false, false, fals
                                          true, true, true, true, true, true, true, true, true, true,
                                          true, true, true, true, true, true, true};
 
+const double R = 8.31446261815324;  // Universal gas constant (J/K-mol)
+
 int main(void)
 {
-  // Print the list of units used by ANN
-  // const char *unit_info = ANN_Units();
-  // std::cout << std::string(unit_info) << std::endl;
-  // Initialize ANN
-  const std::string                    dir      = "model/";
-  const int                            nspecies = 5;
-  std::unordered_map<int, std::string> species_pack;
-  for (int i = 0; i < species_name.size(); i++)
+  // Read config file.
+  const std::string config_name = "./config.dat";
+  std::ifstream     config_file;
+  config_file.open(config_name);
+  std::string              text;
+  std::string              gasmodel;
+  std::vector<std::string> gases;
+  if (config_file.is_open())
   {
-    if ((species_name[i].compare("N") != 0) &&
-        (species_name[i].compare("O") != 0) &&
-        (species_name[i].compare("N2") != 0) &&
-        (species_name[i].compare("O2") != 0) &&
-        (species_name[i].compare("NO") != 0))
-      continue;
-    species_pack.insert({i + 1, species_name[i]});
+    getline(config_file, text);
+    getline(config_file, gasmodel);
+    if (gasmodel != "AIR-5" || gasmodel != "AIR-11")
+    {
+      getline(config_file, text);
+      std::stringstream ss(text);
+      while (!ss.eof())
+      {
+        std::string tmp;
+        ss >> tmp;
+        gases.push_back(tmp);
+      }
+    }
+  }
+  else
+  {
+    std::cout << "Fail to open config file\n";
   }
 
-  const std::string mode_pack[4] = {"T", "R", "V", "E"};
+  // Construct species pack map according to config file.
+  std::unordered_map<int, std::string> species_pack;
+  int                                  nspecies = 0;
+  if (gasmodel.compare("AIR-5") == 0)
+  {
+    for (int i = 0; i < species_name.size(); i++)
+    {
+      if ((species_name[i].compare("N") != 0) &&
+          (species_name[i].compare("O") != 0) &&
+          (species_name[i].compare("N2") != 0) &&
+          (species_name[i].compare("O2") != 0) &&
+          (species_name[i].compare("NO") != 0)) continue;
+
+      species_pack.insert({i + 1, species_name[i]});
+      nspecies++;
+    }
+  }
+  else
+  {
+    for (int i = 0; i < species_name.size(); i++)
+    {
+      for (auto &gas : gases)
+      {
+        if (species_name[i].compare(gas) == 0)
+          species_pack.insert({i + 1, species_name[i]});
+      }
+    }
+  }
 
   std::vector<double> y = {
       0.7330439463792710,
@@ -285,64 +324,18 @@ int main(void)
       0.0318961674512450,
       0.0232148408655277,
       0.0262301911965476};
-  const double R = 8.31446261815324;  // Universal gas constant (J/K-mol)
 
-  std::vector<std::string> species_names;
-  for (auto &species : species_pack)
-  {
-    species_names.push_back(species.second);
-  }
-
-  // Modified model is defined and used as follow.
   std::vector<std::shared_ptr<ANN::Model>> models;
   models.resize(nspecies);
   bool init_flag = false;
-  for (int i = 0; i < nspecies; i++)
+  int  index     = 0;
+  for (auto species : species_pack)
   {
-    models[i] = std::make_shared<ANN::Model>();
-    init_flag = models[i]->Init(species_names[i].c_str());
-    if (init_flag) std::cout << "model[" << i << "] is succeffully initialized\n";
+    models[index] = std::make_shared<ANN::Model>();
+    init_flag     = models[index]->Init(species.second.c_str());
+    index++;
   }
-  // const char* initlog = ANN_Init(dir, &species_names[0], &models[0]);
-  const double Ttr = 300.0;
-  const double Tve = 300.0;
-  for (int i = 0; i < nspecies; i++)
-  {
-    const double et = models[i]->ComputeTranslationalEnergy(Ttr, Tve);  // Compute translational energy
-    const double er = models[i]->ComputeRotationalEnergy(Ttr, Tve);     // Compute rotational energy
-    const double ev = models[i]->ComputeVibrationalEnergy(Ttr, Tve);    // Compute vibrational energy
-    const double ee = models[i]->ComputeElectronicEnergy(Ttr, Tve);     // Compute electronic energy
-    std::cout << species_names[i] << std::endl;
-    std::cout << std::scientific;
-    std::cout << std::setprecision(10);
-    std::cout << "et[" << i << "] = " << et << "\n";
-    std::cout << "er[" << i << "] = " << er << "\n";
-    std::cout << "ev[" << i << "] = " << ev << "\n";
-    std::cout << "ee[" << i << "] = " << ee << "\n";
-  }
-  double cvt[2], cvr[2], cvv[2], cve[2];
-  // models[i]->ComputeTranslationalCv(Ttr, Tve, &cvt[0]); // Compute specific heat of translational energy
-  // models[i]->ComputeRotationalCv(Ttr, Tve, &cvr[0]); // Compute specific heat of rotational energy
-  // models[i]->ComputeVibrationalCv(Ttr, Tve, &cvv[0]); // Compute specific heat of vibrational energy
-  // models[i]->ComputeElectronicCv(Ttr, Tve, &cve[0]); // Compute specific heat of electronic energy
 
-  // std::vector<ANN_DEF> fptrs;
-  // std::vector<ANN_GRAD_DEF> gptrs;
-  // fptrs.resize(4 * nspecies);
-  // gptrs.resize(4 * nspecies);
-  // const char *initlog = ANN_Init(dir.c_str());
-  // std::cout << std::string(initlog) << std::endl;
-  // int i = 0;
-  // for (auto &species : species_pack)
-  // {
-  //   for (int j = 0; j < 4; j++)
-  //   {
-  //     fptrs[i * 4 + j] = ANN_MODEL(species.second.c_str(), mode_pack[j].c_str());
-  //     gptrs[i * 4 + j] = ANN_MODEL_GRAD(species.second.c_str(), mode_pack[j].c_str());
-  //   }
-  //   i++;
-  // }
-  // Usage example of ANN subroutines
   double et_ann  = 0.0;  // Translational energy of N2 [J/kg]
   double er_ann  = 0.0;  // Rotational energy of N2 [J/kg]
   double ev_ann  = 0.0;  // Vibrational energy of N2 [J/kg]
@@ -351,169 +344,134 @@ int main(void)
   double er_rrho = 0.0;
   double ev_rrho = 0.0;
   double ee_rrho = 0.0;
-  // grad[0] = derivative of E with respect to Ttr (dEV/dTtr)
-  // grad[1] = derivative of E with respect to Tve (dEV/dTve)
+
   std::vector<double> CvT(2, 0.0);
   std::vector<double> CvR(2, 0.0);
   std::vector<double> CvV(2, 0.0);
   std::vector<double> CvE(2, 0.0);
+
   std::cout << std::setprecision(8) << std::scientific << std::uppercase;
   std::string data_direc = "./database";
-  double      Cv         = 0.0;
-  double      Cp         = 0.0;
-  double      e_t_ann    = 0.0;
-  double      e_ve_ann   = 0.0;
-  double      e_t_rrho   = 0.0;
-  double      e_ve_rrho  = 0.0;
-  int         ispecies   = 0;
-  // #ifdef WRITE
-  //   ispecies = 0;
-  //   for (auto &species : species_pack)
-  //   {
-  //     const int index = species.first - 1;
-  //     std::string species_direc = data_direc + "/" + std::string(species_name[index]) + "/";
-  //     std::ofstream model_en_file(data_direc + "/model_en_" + std::string(species_name[index]) + ".plt");
-  //     model_en_file << std::setprecision(8) << std::scientific << std::uppercase;
-  //     model_en_file << "variables = \"Ttr\", \"Tve\", \"es\", \"est\", \"esr\", \"esv\", \"ese\"\n";
-  //     model_en_file << "zone I=1000,J=1000\n";
-  //     for (int itemp1 = 0; itemp1 < 1000; itemp1++)
-  //     {
-  //       const double temp1 = 50.0 + double(itemp1) * 50.0;
-  //       for (int itemp2 = 0; itemp2 < 1000; itemp2++)
-  //       {
-  //         const double temp2 = 50.0 + double(itemp2) * 50.0;
-  //         et_ann = ComputeEnergy(fptrs[ispecies * 4 + 0], temp1, temp2);
-  //         er_ann = ComputeEnergy(fptrs[ispecies * 4 + 1], temp1, temp2);
-  //         ev_ann = ComputeEnergy(fptrs[ispecies * 4 + 2], temp1, temp2);
-  //         ee_ann = ComputeEnergy(fptrs[ispecies * 4 + 3], temp1, temp2);
-  //         et_rrho = 1.5 * R / species_weight[index] * temp1;
-  //         er_rrho = molecule_flag[index] ? 0.5 * R / species_weight[index] * temp1 * lin[index] : 0.0;
-  //         ev_rrho = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / temp2) - 1.0) : 0.0;
-  //         double num = 0.0;
-  //         double den = 0.0;
-  //         den += ge[index][0] * exp(-thetel[index][0] / temp2);
-  //         for (int i = 1; i < thetel[index].size(); i++)
-  //         {
-  //           num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / temp2);
-  //           den += ge[index][i] * exp(-thetel[index][i] / temp2);
-  //         }
-  //         ee_rrho = R / species_weight[index] * num / den;
-  //         const double es = et_ann + er_ann + ev_ann + ee_ann;
-  //         model_en_file << temp1 << "\t" << temp2 << "\t" << es << "\t" << et_ann << "\t" << er_ann << "\t" << ev_ann << "\t" << ee_ann << "\n";
-  //       }
-  //     }
-  //     model_en_file.close();
-  //     std::ofstream model_cv_file(data_direc + "/model_cv_" + std::string(species_pack[ispecies]) + ".plt");
-  //     model_cv_file << std::setprecision(8) << std::scientific << std::uppercase;
-  //     model_cv_file << "variables = \"Ttr\", \"Tve\", \"Cp\", \"Cvt\", \"Cvr\", \"Cvv\", \"Cve\"\n";
-  //     model_cv_file << "zone I=1000,J=1000\n";
-  //     for (int itemp1 = 0; itemp1 < 1000; itemp1++)
-  //     {
-  //       const double temp1 = 50.0 + double(itemp1) * 50.0;
-  //       for (int itemp2 = 0; itemp2 < 1000; itemp2++)
-  //       {
-  //         const double temp2 = 50.0 + double(itemp2) * 50.0;
-  //         et_ann = ComputeCv(gptrs[ispecies * 4 + 0], &CvT[0], temp1, temp2);
-  //         er_ann = ComputeCv(gptrs[ispecies * 4 + 1], &CvR[0], temp1, temp2);
-  //         ev_ann = ComputeCv(gptrs[ispecies * 4 + 2], &CvV[0], temp1, temp2);
-  //         ee_ann = ComputeCv(gptrs[ispecies * 4 + 3], &CvE[0], temp1, temp2);
-  //         for (int i = 0; i < 2; i++)
-  //         {
-  //           CvT[i] *= species_weight[ispecies] / R;
-  //           CvR[i] *= species_weight[ispecies] / R;
-  //           CvV[i] *= species_weight[ispecies] / R;
-  //           CvE[i] *= species_weight[ispecies] / R;
-  //         }
-  //         double cp = (CvT[0] + CvR[0] + CvV[1] + CvE[1]) + 1.0;
-  //         model_cv_file << temp1 << "\t" << temp2 << "\t" << cp << "\t" << CvT[0] << "\t" << CvR[0] << "\t" << CvV[1] << "\t" << CvE[1] << "\n";
-  //       }
-  //     }
-  //     model_cv_file.close();
-  //     ispecies++;
-  //   }
-  // #endif
-  // #ifdef TEST
-  //   ispecies = 0;
-  //   for (auto &species : species_pack)
-  //   {
-  //     const double Ttr = 21209.8524181727;
-  //     const double Tve = 6367.10208721561;
-  //     std::cout << "Species " << species.second << std::endl;
-  //     std::cout << "Translational-rotational temperature (Ttr) = " << Ttr << " K" << std::endl;
-  //     std::cout << "Vibrational-electronic temperature (Tve)   = " << Tve << " K" << std::endl;
-  //     // input: species, mode, Ttr, Tve
-  //     // output: energy
-  //     const int index = species.first - 1;
-  //     et_ann = ComputeEnergy(fptrs[ispecies * 4 + 0], Ttr, Tve);
-  //     er_ann = ComputeEnergy(fptrs[ispecies * 4 + 1], Ttr, Tve);
-  //     ev_ann = ComputeEnergy(fptrs[ispecies * 4 + 2], Ttr, Tve);
-  //     ee_ann = ComputeEnergy(fptrs[ispecies * 4 + 3], Ttr, Tve);
-  //     et_rrho = 1.5 * R / species_weight[index] * Ttr;
-  //     er_rrho = molecule_flag[index] ? 0.5 * R / species_weight[index] * Ttr * lin[index] : 0.0;
-  //     ev_rrho = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / Tve) - 1.0) : 0.0;
-  //     double num = 0.0;
-  //     double den = 0.0;
-  //     den += ge[index][0] * exp(-thetel[index][0] / Tve);
-  //     for (int i = 1; i < thetel[index].size(); i++)
-  //     {
-  //       num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / Tve);
-  //       den += ge[index][i] * exp(-thetel[index][i] / Tve);
-  //     }
-  //     ee_rrho = R / species_weight[index] * num / den;
-  //     // std::cout << "et_ann = " << et_ann << std::endl;
-  //     // std::cout << "er_ann = " << er_ann << std::endl;
-  //     // std::cout << "ev_ann = " << ev_ann << std::endl;
-  //     // std::cout << "ee_ann = " << ee_ann << std::endl;
-  //     // std::cout << "es_ann = " << et_ann + er_ann + ev_ann + ee_ann << std::endl;
-  //     //
-  //     // std::cout << "et_rrho = " << et_rrho << std::endl;
-  //     // std::cout << "er_rrho = " << er_rrho << std::endl;
-  //     // std::cout << "ev_rrho = " << ev_rrho << std::endl;
-  //     // std::cout << "ee_rrho = " << ee_rrho << std::endl;
-  //     // std::cout << "es_rrho = " << et_rrho + er_rrho + ev_rrho + ee_rrho << std::endl;
-  //     // std::cout << std::endl << "Example 1, ANN_MODEL" << std::endl;
-  //     // std::cout << "Translational energy (ET) = " << et_ann << " J/kg" << std::endl;
-  //     // std::cout << "Rotational energy (ER)    = " << er_ann << " J/kg" << std::endl;
-  //     // std::cout << "Vibrational energy (EV)   = " << ev_ann << " J/kg" << std::endl;
-  //     // std::cout << "Electronic energy (EE)    = " << ee_ann << " J/kg" << std::endl;
-  //     // input: species, mode, Ttr, Tve
-  //     // output: specific heat
-  //     // ET = ComputeCv(gptrs[ispecies*4+0], &CvT[0], Ttr, Tve);
-  //     // ER = ComputeCv(gptrs[ispecies*4+1], &CvR[0], Ttr, Tve);
-  //     // EV = ComputeCv(gptrs[ispecies*4+2], &CvV[0], Ttr, Tve);
-  //     // EE = ComputeCv(gptrs[ispecies*4+3], &CvE[0], Ttr, Tve);
-  //     // std::cout << std::endl << "Example 2, ANN_MODEL_Grad" << std::endl;
-  //     // std::cout << "Translational energy (ET) = " << ET << " J/kg" << std::endl;
-  //     // std::cout << "dET/dTtr                  = " << CvT[0] << " J/kg-K" << std::endl;
-  //     // std::cout << "dET/dTve                  = " << CvT[1] << " J/kg-K" << std::endl;
-  //     // std::cout << "Rotational energy (ER)    = " << ER << " J/kg" << std::endl;
-  //     // std::cout << "dER/dTtr                  = " << CvR[0] << " J/kg-K" << std::endl;
-  //     // std::cout << "dER/dTve                  = " << CvR[1] << " J/kg-K" << std::endl;
-  //     // std::cout << "Vibrational energy (EV)   = " << EV << " J/kg" << std::endl;
-  //     // std::cout << "dEV/dTtr                  = " << CvV[0] << " J/kg-K" << std::endl;
-  //     // std::cout << "dEV/dTve                  = " << CvV[1] << " J/kg-K" << std::endl;
-  //     // std::cout << "Electronic energy (EE)    = " << EE << " J/kg" << std::endl;
-  //     // std::cout << "dEE/dTtr                  = " << CvE[0] << " J/kg-K" << std::endl;
-  //     // std::cout << "dEE/dTve                  = " << CvE[1] << " J/kg-K" << std::endl;
-  //     std::cout << std::endl
-  //               << std::endl;
-  //     e_t_ann += y[ispecies] * (et_ann + er_ann + ev_ann + ee_ann);
-  //     e_ve_ann += y[ispecies] * (ev_ann + ee_ann);
-  //     e_t_rrho += y[ispecies] * (et_rrho + er_rrho + ev_rrho + ee_rrho);
-  //     e_ve_rrho += y[ispecies] * (ev_rrho + ee_rrho);
-  //     ispecies++;
-  //   }
-  // #endif
-  // Finalize ANN
-  // const char *finlog = ANN_Finalize();
-  // std::cout << std::string(finlog) << std::endl;
-  // std::cout << "Total energy from ANN model = " << e_t_ann << std::endl;
-  // std::cout << "VE energy from ANN model = " << e_ve_ann << std::endl;
-  // std::cout << "Total energy from RRHO model = " << e_t_rrho << std::endl;
-  // std::cout << "VE energy from RRHO model = " << e_ve_rrho << std::endl;
-  // std::cout << std::fixed << std::setprecision(4);
-  // std::cout << "Diff. of total energy = " << fabs(e_t_ann - e_t_rrho) / e_t_ann * 100.0 << " %" << std::endl;
-  // std::cout << "Diff. of VE energy = " << fabs(e_ve_ann - e_ve_rrho) / e_ve_ann * 100.0 << " %" << std::endl;
+
+  double Cv        = 0.0;
+  double Cp        = 0.0;
+  double e_t_ann   = 0.0;
+  double e_ve_ann  = 0.0;
+  double e_t_rrho  = 0.0;
+  double e_ve_rrho = 0.0;
+  int    ispecies  = 0;
+
+#ifdef WRITE
+  ispecies = 0;
+  for (auto &species : species_pack)
+  {
+    const int     index         = species.first - 1;
+    std::string   species_direc = data_direc + "/" + std::string(species_name[index]) + "/";
+    std::ofstream model_en_file(data_direc + "/model_en_" + std::string(species_name[index]) + ".plt");
+    model_en_file << std::setprecision(8) << std::scientific << std::uppercase;
+    model_en_file << "variables = \"Ttr\", \"Tve\", \"es\", \"est\", \"esr\", \"esv\", \"ese\"\n";
+    model_en_file << "zone I=1000,J=1000\n";
+    for (int itemp1 = 0; itemp1 < 1'000; itemp1++)
+    {
+      const double temp1 = 50.0 + double(itemp1) * 50.0;
+      for (int itemp2 = 0; itemp2 < 1'000; itemp2++)
+      {
+        const double temp2 = 50.0 + double(itemp2) * 50.0;
+        et_ann             = models[index]->ComputeTranslationalEnergy(temp1, temp2);
+        er_ann             = models[index]->ComputeRotationalEnergy(temp1, temp2);
+        ev_ann             = models[index]->ComputeVibrationalEnergy(temp1, temp2);
+        ee_ann             = models[index]->ComputeElectronicEnergy(temp1, temp2);
+        et_rrho            = 1.5 * R / species_weight[index] * temp1;
+        er_rrho            = molecule_flag[index] ? 0.5 * R / species_weight[index] * temp1 * lin[index] : 0.0;
+        ev_rrho            = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / temp2) - 1.0) : 0.0;
+        double num         = 0.0;
+        double den         = 0.0;
+        den += ge[index][0] * exp(-thetel[index][0] / temp2);
+        for (int i = 1; i < thetel[index].size(); i++)
+        {
+          num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / temp2);
+          den += ge[index][i] * exp(-thetel[index][i] / temp2);
+        }
+        ee_rrho         = R / species_weight[index] * num / den;
+        const double es = et_ann + er_ann + ev_ann + ee_ann;
+        model_en_file << temp1 << "\t" << temp2 << "\t" << es << "\t" << et_ann << "\t" << er_ann << "\t" << ev_ann << "\t" << ee_ann << "\n";
+      }
+    }
+    model_en_file.close();
+    std::ofstream model_cv_file(data_direc + "/model_cv_" + std::string(species_pack[ispecies]) + ".plt");
+    model_cv_file << std::setprecision(8) << std::scientific << std::uppercase;
+    model_cv_file << "variables = \"Ttr\", \"Tve\", \"Cp\", \"Cvt\", \"Cvr\", \"Cvv\", \"Cve\"\n";
+    model_cv_file << "zone I=1000,J=1000\n";
+    for (int itemp1 = 0; itemp1 < 1'000; itemp1++)
+    {
+      const double temp1 = 50.0 + double(itemp1) * 50.0;
+      for (int itemp2 = 0; itemp2 < 1'000; itemp2++)
+      {
+        const double temp2 = 50.0 + double(itemp2) * 50.0;
+        models[ispecies]->ComputeTranslationalCv(&CvT[0], temp1, temp2);
+        models[ispecies]->ComputeRotaionalCv(&CvR[0], temp1, temp2);
+        models[ispecies]->ComputeVibrationalCv(&CvV[0], temp1, temp2);
+        models[ispecies]->ComputeElectronicCv(&CvE[0], temp1, temp2);
+        for (int i = 0; i < 2; i++)
+        {
+          CvT[i] *= species_weight[ispecies] / R;
+          CvR[i] *= species_weight[ispecies] / R;
+          CvV[i] *= species_weight[ispecies] / R;
+          CvE[i] *= species_weight[ispecies] / R;
+        }
+        double cp = (CvT[0] + CvR[0] + CvV[1] + CvE[1]) + 1.0;
+        model_cv_file << temp1 << "\t" << temp2 << "\t" << cp << "\t" << CvT[0] << "\t" << CvR[0] << "\t" << CvV[1] << "\t" << CvE[1] << "\n";
+      }
+    }
+    model_cv_file.close();
+    ispecies++;
+  }
+#endif
+#ifdef TEST
+  ispecies = 0;
+  for (auto &species : species_pack)
+  {
+    const double Ttr = 21209.8524181727;
+    const double Tve = 6367.10208721561;
+    // std::cout << "Species " << species.second << std::endl;
+    // std::cout << "Translational-rotational temperature (Ttr) = " << Ttr << " K" << std::endl;
+    // std::cout << "Vibrational-electronic temperature (Tve)   = " << Tve << " K" << std::endl;
+    // input: species, mode, Ttr, Tve
+    // output: energy
+    const int index = species.first - 1;
+    et_ann          = models[ispecies]->ComputeTranslationalEnergy(Ttr, Tve);
+    er_ann          = models[ispecies]->ComputeRotationalEnergy(Ttr, Tve);
+    ev_ann          = models[ispecies]->ComputeVibrationalEnergy(Ttr, Tve);
+    ee_ann          = models[ispecies]->ComputeElectronicEnergy(Ttr, Tve);
+    et_rrho         = 1.5 * R / species_weight[index] * Ttr;
+    er_rrho         = molecule_flag[index] ? 0.5 * R / species_weight[index] * Ttr * lin[index] : 0.0;
+    ev_rrho         = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / Tve) - 1.0) : 0.0;
+    double num      = 0.0;
+    double den      = 0.0;
+    den += ge[index][0] * exp(-thetel[index][0] / Tve);
+    for (int i = 1; i < thetel[index].size(); i++)
+    {
+      num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / Tve);
+      den += ge[index][i] * exp(-thetel[index][i] / Tve);
+    }
+    ee_rrho = R / species_weight[index] * num / den;
+    std::cout << std::endl
+              << std::endl;
+    e_t_ann += y[ispecies] * (et_ann + er_ann + ev_ann + ee_ann);
+    e_ve_ann += y[ispecies] * (ev_ann + ee_ann);
+    e_t_rrho += y[ispecies] * (et_rrho + er_rrho + ev_rrho + ee_rrho);
+    e_ve_rrho += y[ispecies] * (ev_rrho + ee_rrho);
+    ispecies++;
+  }
+#endif
+
+  std::cout << "Total energy from ANN model = " << e_t_ann << std::endl;
+  std::cout << "VE energy from ANN model = " << e_ve_ann << std::endl;
+  std::cout << "Total energy from RRHO model = " << e_t_rrho << std::endl;
+  std::cout << "VE energy from RRHO model = " << e_ve_rrho << std::endl;
+  std::cout << std::fixed << std::setprecision(4);
+  std::cout << "Diff. of total energy = " << fabs(e_t_ann - e_t_rrho) / e_t_ann * 100.0 << " %" << std::endl;
+  std::cout << "Diff. of VE energy = " << fabs(e_ve_ann - e_ve_rrho) / e_ve_ann * 100.0 << " %" << std::endl;
 
   return 0;
 }
