@@ -89,11 +89,11 @@ const std::vector<std::vector<double>> thetv = {
     {3.213415E+03, 7.657207E+03, 7.868867E+03},                // H2O
     {1.537370E+03, 1.537370E+03, 4.404282E+03, 6.925168E+03},  // HCN
     {1.078861E+03, 2.813475E+03, 2.813475E+03, 6.221624E+03, 6.582388E+03,
-     6.582388E+03},                                            // CH3
+     6.582388E+03},  // CH3
     {2.688448E+03, 2.688448E+03, 2.688448E+03, 3.126155E+03, 3.126155E+03,
      6.065759E+03, 6.277572E+03, 6.277572E+03, 6.277572E+03},  // CH4
     {1.298803E+03, 1.298803E+03, 1.550028E+03, 1.550028E+03, 4.136480E+03,
-     6.859573E+03, 7.065823E+03},                              // C2H2
+     6.859573E+03, 7.065823E+03},  // C2H2
     {4.050701E+02, 6.583442E+02, 9.295760E+02, 1.580336E+03, 1.945645E+03,
      2.467823E+03, 3.641613E+03, 6.467357E+03, 6.478553E+03},  // H2O2
     {0.000000E+00}                                             // e
@@ -121,11 +121,11 @@ const std::vector<std::vector<double>> ge = {
     {1.000E+00, 5.000E+00, 3.000E+00, 1.000E+00, 3.000E+00, 3.000E+00, 7.000E+00, 5.000E+00, 3.000E+00, 5.000E+00,
      1.000E+00, 3.000E+00, 5.000E+00, 3.000E+00, 1.000E+00, 1.000E+00, 3.000E+00, 5.000E+00, 9.000E+00, 7.000E+00,
      5.000E+00, 5.000E+00, 3.000E+00, 7.000E+00, 3.000E+00, 5.000E+00, 5.000E+00, 7.000E+00, 1.000E+00, 3.000E+00,
-     3.000E+00},                                                                               // Ar
+     3.000E+00},  // Ar
     {1.000E+00, 3.000E+00, 5.000E+00, 5.000E+00, 1.000E+00, 5.000E+00, 1.500E+01, 9.000E+00, 5.000E+00, 1.200E+01,
-     3.000E+00, 2.100E+01, 3.000E+00, 1.500E+01, 6.000E+01},                                   // Np
+     3.000E+00, 2.100E+01, 3.000E+00, 1.500E+01, 6.000E+01},  // Np
     {4.000E+00, 6.000E+00, 4.000E+00, 4.000E+00, 2.000E+00, 6.000E+00, 4.000E+00, 2.000E+00, 6.000E+00, 4.000E+00,
-     2.000E+00, 4.000E+00, 6.000E+00, 2.000E+00, 4.000E+00},                                   // Op
+     2.000E+00, 4.000E+00, 6.000E+00, 2.000E+00, 4.000E+00},  // Op
     {2.000E+00, 4.000E+00, 1.200E+01, 1.000E+01, 2.000E+00, 6.000E+00, 2.000E+00, 6.000E+00, 4.000E+00, 1.000E+01,
      1.000E+01, 2.000E+00},                                                                    // Cp
     {1.000E+00},                                                                               // Hp
@@ -185,7 +185,7 @@ const std::vector<std::vector<double>> thetel = {
      8.91782123117494E+04, 1.01271124358477E+05, 1.02889747327253E+05, 1.12489260614078E+05, 1.12903628094085E+05,
      1.12637454539220E+05, 1.16348057771642E+05, 1.20635610168935E+05, 1.20688844879908E+05, 1.21011130697691E+05,
      1.22349192351880E+05, 1.24280029706634E+05, 1.24468509358998E+05, 1.26199356853610E+05, 1.27531663403910E+05,
-     1.28278388133506E+05, 1.28794908707542E+05, 1.29171868012270E+05},                                              // C
+     1.28278388133506E+05, 1.28794908707542E+05, 1.29171868012270E+05},  // C
     {0.00000000000000E+00, 1.18352416578578E+05, 1.40269578718995E+05, 1.47940700570219E+05, 1.51491599669722E+05,
      1.53419559472532E+05, 1.54582090458106E+05, 1.55337447843536E+05, 1.55855407193544E+05, 1.56225172618411E+05},  // H
     {0.00000000000000E+00, 1.34013493036475E+05, 1.34886686174031E+05, 1.36042167157342E+05, 1.37259515507459E+05,
@@ -220,18 +220,18 @@ const std::vector<std::vector<double>> thetel = {
      7.50750424766000E+04, 7.63769908538853E+04, 8.68505605438498E+04, 8.72312606661061E+04, 8.89163550848006E+04,
      8.98846513141221E+04, 8.99024921361780E+04, 9.05177127419104E+04, 9.27104073236132E+04, 9.62541125432550E+04,
      9.69360923540996E+04, 9.74871435514698E+04, 9.74943374313310E+04, 1.00322970992767E+05, 1.01450971355007E+05,
-     1.01597726504177E+05, 1.02475379847247E+05},                                                                    // NO
-    {0.00000000000000E+00},                                                                                          // NH
-    {0.00000000000000E+00},                                                                                          // OH
-    {0.00000000000000E+00},                                                                                          // CN
-    {0.00000000000000E+00},                                                                                          // CO
-    {0.00000000000000E+00},                                                                                          // CH
-    {0.00000000000000E+00},                                                                                          // SiO
-    {0.00000000000000E+00},                                                                                          // N2p
-    {0.00000000000000E+00},                                                                                          // O2p
-    {0.00000000000000E+00},                                                                                          // NOp
-    {0.00000000000000E+00},                                                                                          // CNp
-    {0.00000000000000E+00},                                                                                          // COp
+     1.01597726504177E+05, 1.02475379847247E+05},  // NO
+    {0.00000000000000E+00},                        // NH
+    {0.00000000000000E+00},                        // OH
+    {0.00000000000000E+00},                        // CN
+    {0.00000000000000E+00},                        // CO
+    {0.00000000000000E+00},                        // CH
+    {0.00000000000000E+00},                        // SiO
+    {0.00000000000000E+00},                        // N2p
+    {0.00000000000000E+00},                        // O2p
+    {0.00000000000000E+00},                        // NOp
+    {0.00000000000000E+00},                        // CNp
+    {0.00000000000000E+00},                        // COp
     {0.00000000000000E+00, 2.01428636114430E+04, 3.09336834032880E+04, 3.42428681394540E+04, 3.55025165031550E+04,
      4.18683807923570E+04, 4.71918518896670E+04, 4.73357294868920E+04, 4.84867502646890E+04, 5.82704268759610E+04},  // C3
     {0.00000000000000E+00, 4.31632791673780E+04, 4.74796070841160E+04, 5.17959350008540E+04, 6.47449187510680E+04},  // CO2
@@ -242,9 +242,9 @@ const std::vector<std::vector<double>> thetel = {
     {0.00000000000000E+00, 6.64786437976240E+04},                                                                    // CH3
     {0.00000000000000E+00, 9.88870725724650E+04},                                                                    // CH4
     {0.00000000000000E+00, 3.59693993061490E+04, 5.03571590286080E+04, 6.07134684768350E+04, 7.19387986122980E+04,
-     7.78608005140620E+04},                                                                                          // C2H2
-    {0.00000000000000E+00},                                                                                          // H2O2
-    {0.00000000000000E+00}                                                                                           // e
+     7.78608005140620E+04},  // C2H2
+    {0.00000000000000E+00},  // H2O2
+    {0.00000000000000E+00}   // e
 };
 
 const std::vector<double> lin = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -376,58 +376,72 @@ int main(void)
     std::string   species_direc = data_direc + "/" + std::string(species_name[index]) + "/";
     std::ofstream model_en_file(data_direc + "/model_en_" + std::string(species_name[index]) + ".plt");
     model_en_file << std::setprecision(8) << std::scientific << std::uppercase;
-    model_en_file << "variables = \"Ttr\", \"Tve\", \"es\", \"est\", \"esr\", \"esv\", \"ese\"\n";
-    model_en_file << "zone I=1000,J=1000\n";
-    for (int itemp1 = 0; itemp1 < 1'000; itemp1++)
+    model_en_file << "variables = \"tt\", \"tr\", \"tv\", \"te\", \"es\", \"est\", \"esr\", \"esv\", \"ese\"\n";
+    for (int itemp1 = 0; itemp1 < 1000; itemp1++)
     {
       const double temp1 = 50.0 + double(itemp1) * 50.0;
-      for (int itemp2 = 0; itemp2 < 1'000; itemp2++)
+      for (int itemp2 = 0; itemp2 < 1000; itemp2++)
       {
         const double temp2 = 50.0 + double(itemp2) * 50.0;
-        et_ann             = models[index]->ComputeTranslationalEnergy(temp1, temp2);
-        er_ann             = models[index]->ComputeRotationalEnergy(temp1, temp2);
-        ev_ann             = models[index]->ComputeVibrationalEnergy(temp1, temp2);
-        ee_ann             = models[index]->ComputeElectronicEnergy(temp1, temp2);
-        et_rrho            = 1.5 * R / species_weight[index] * temp1;
-        er_rrho            = molecule_flag[index] ? 0.5 * R / species_weight[index] * temp1 * lin[index] : 0.0;
-        ev_rrho            = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / temp2) - 1.0) : 0.0;
-        double num         = 0.0;
-        double den         = 0.0;
-        den += ge[index][0] * exp(-thetel[index][0] / temp2);
-        for (int i = 1; i < thetel[index].size(); i++)
+        for (int itemp3 = 0; itemp3 < 1000; itemp3++)
         {
-          num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / temp2);
-          den += ge[index][i] * exp(-thetel[index][i] / temp2);
+          const double temp3 = 50.0 + double(itemp3) * 50.0;
+          for (int itemp4 = 0; itemp4 < 1000; itemp4++)
+          {
+            const double temp4 = 50.0 + double(itemp4) * 50.0;
+            et_ann             = models[index]->ComputeTranslationalEnergy(temp1, temp2, temp3, temp4);
+            er_ann             = models[index]->ComputeRotationalEnergy(temp1, temp2, temp3, temp4);
+            ev_ann             = models[index]->ComputeVibrationalEnergy(temp1, temp2, temp3, temp4);
+            ee_ann             = models[index]->ComputeElectronicEnergy(temp1, temp2, temp3, temp4);
+            et_rrho            = 1.5 * R / species_weight[index] * temp1;
+            er_rrho            = molecule_flag[index] ? 0.5 * R / species_weight[index] * temp1 * lin[index] : 0.0;
+            ev_rrho            = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / temp2) - 1.0) : 0.0;
+            double num         = 0.0;
+            double den         = 0.0;
+            den += ge[index][0] * exp(-thetel[index][0] / temp2);
+            for (int i = 1; i < thetel[index].size(); i++)
+            {
+              num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / temp2);
+              den += ge[index][i] * exp(-thetel[index][i] / temp2);
+            }
+            ee_rrho         = R / species_weight[index] * num / den;
+            const double es = et_ann + er_ann + ev_ann + ee_ann;
+            model_en_file << temp1 << "\t" << temp2 << "\t" << temp3 << "\t" << temp4 << "\t" << es << "\t" << et_ann << "\t" << er_ann << "\t" << ev_ann << "\t" << ee_ann << "\n";
+          }
         }
-        ee_rrho         = R / species_weight[index] * num / den;
-        const double es = et_ann + er_ann + ev_ann + ee_ann;
-        model_en_file << temp1 << "\t" << temp2 << "\t" << es << "\t" << et_ann << "\t" << er_ann << "\t" << ev_ann << "\t" << ee_ann << "\n";
       }
     }
     model_en_file.close();
     std::ofstream model_cv_file(data_direc + "/model_cv_" + std::string(species_pack[ispecies]) + ".plt");
     model_cv_file << std::setprecision(8) << std::scientific << std::uppercase;
-    model_cv_file << "variables = \"Ttr\", \"Tve\", \"Cp\", \"Cvt\", \"Cvr\", \"Cvv\", \"Cve\"\n";
-    model_cv_file << "zone I=1000,J=1000\n";
-    for (int itemp1 = 0; itemp1 < 1'000; itemp1++)
+    model_cv_file << "variables = \"tt\", \"tr\", \"tv\", \"te\", \"Cp\", \"Cvt\", \"Cvr\", \"Cvv\", \"Cve\"\n";
+    for (int itemp1 = 0; itemp1 < 1000; itemp1++)
     {
       const double temp1 = 50.0 + double(itemp1) * 50.0;
-      for (int itemp2 = 0; itemp2 < 1'000; itemp2++)
+      for (int itemp2 = 0; itemp2 < 1000; itemp2++)
       {
         const double temp2 = 50.0 + double(itemp2) * 50.0;
-        models[ispecies]->ComputeTranslationalCv(&CvT[0], temp1, temp2);
-        models[ispecies]->ComputeRotaionalCv(&CvR[0], temp1, temp2);
-        models[ispecies]->ComputeVibrationalCv(&CvV[0], temp1, temp2);
-        models[ispecies]->ComputeElectronicCv(&CvE[0], temp1, temp2);
-        for (int i = 0; i < 2; i++)
+        for (int itemp3 = 0; itemp3 < 1000; itemp3++)
         {
-          CvT[i] *= species_weight[ispecies] / R;
-          CvR[i] *= species_weight[ispecies] / R;
-          CvV[i] *= species_weight[ispecies] / R;
-          CvE[i] *= species_weight[ispecies] / R;
+          const double temp3 = 50.0 + double(itemp3) * 50.0;
+          for (int itemp4 = 0; itemp4 < 1000; itemp4++)
+          {
+            const double temp4 = 50.0 + double(itemp4) * 50.0;
+            models[ispecies]->ComputeTranslationalCv(&CvT[0], temp1, temp2, temp3, temp4);
+            models[ispecies]->ComputeRotationalCv(&CvR[0], temp1, temp2, temp3, temp4);
+            models[ispecies]->ComputeVibrationalCv(&CvV[0], temp1, temp2, temp3, temp4);
+            models[ispecies]->ComputeElectronicCv(&CvE[0], temp1, temp2, temp3, temp4);
+            for (int i = 0; i < 2; i++)
+            {
+              CvT[i] *= species_weight[ispecies] / R;
+              CvR[i] *= species_weight[ispecies] / R;
+              CvV[i] *= species_weight[ispecies] / R;
+              CvE[i] *= species_weight[ispecies] / R;
+            }
+            double cp = (CvT[0] + CvR[1] + CvV[2] + CvE[3]) + 1.0;
+            model_cv_file << temp1 << "\t" << temp2 << "\t" << temp3 << "\t" << temp4 << "\t" << cp << "\t" << CvT[0] << "\t " << CvR[0] << "\t " << CvV[1] << "\t " << CvE[1] << "\n ";
+          }
         }
-        double cp = (CvT[0] + CvR[0] + CvV[1] + CvE[1]) + 1.0;
-        model_cv_file << temp1 << "\t" << temp2 << "\t" << cp << "\t" << CvT[0] << "\t" << CvR[0] << "\t" << CvV[1] << "\t" << CvE[1] << "\n";
       }
     }
     model_cv_file.close();
@@ -442,16 +456,20 @@ int main(void)
     const double Tve_ANN  = 20036.7997046619;
     const double Ttr_RRHO = 64987.6649760793;
     const double Tve_RRHO = 19434.6297147672;
+    const double tt       = 400.0;
+    const double tr       = 400.0;
+    const double tv       = 400.0;
+    const double te       = 400.0;
     // std::cout << "Species " << species.second << std::endl;
     // std::cout << "Translational-rotational temperature (Ttr) = " << Ttr << " K" << std::endl;
     // std::cout << "Vibrational-electronic temperature (Tve)   = " << Tve << " K" << std::endl;
     // input: species, mode, Ttr, Tve
     // output: energy
     const int index = species.first - 1;
-    et_ann          = models[ispecies]->ComputeTranslationalEnergy(Ttr_ANN, Tve_ANN);
-    er_ann          = models[ispecies]->ComputeRotationalEnergy(Ttr_ANN, Tve_ANN);
-    ev_ann          = models[ispecies]->ComputeVibrationalEnergy(Ttr_ANN, Tve_ANN);
-    ee_ann          = models[ispecies]->ComputeElectronicEnergy(Ttr_ANN, Tve_ANN);
+    et_ann          = models[ispecies]->ComputeTranslationalEnergy(tt, tr, tv, te);
+    er_ann          = models[ispecies]->ComputeRotationalEnergy(tt, tr, tv, te);
+    ev_ann          = models[ispecies]->ComputeVibrationalEnergy(tt, tr, tv, te);
+    ee_ann          = models[ispecies]->ComputeElectronicEnergy(tt, tr, tv, te);
     et_rrho         = 1.5 * R / species_weight[index] * Ttr_RRHO;
     er_rrho         = molecule_flag[index] ? 0.5 * R / species_weight[index] * Ttr_RRHO * lin[index] : 0.0;
     ev_rrho         = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / Tve_RRHO) - 1.0) : 0.0;
