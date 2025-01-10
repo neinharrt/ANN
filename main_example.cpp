@@ -318,12 +318,19 @@ int main(void)
     }
   }
 
-  std::vector<double> y = {
-      0.7330439463792710,
-      0.1856148633861940,
-      0.0318961674512450,
-      0.0232148408655277,
-      0.0262301911965476};
+  std::vector<double> y_ANN = {
+      0.4310098057317580,
+      0.0921311002809625,
+      0.0261340112027914,
+      0.3249153226656000,
+      0.1258097537145440};
+
+  std::vector<double> y_RRHO = {
+      0.4357968527333080,
+      0.0939634111481260,
+      0.0257276077548367,
+      0.3205997688141610,
+      0.1239123823609730};
 
   std::vector<std::shared_ptr<ANN::Model>> models;
   models.resize(nspecies);
@@ -431,36 +438,38 @@ int main(void)
   ispecies = 0;
   for (auto &species : species_pack)
   {
-    const double Ttr = 21209.8524181727;
-    const double Tve = 6367.10208721561;
+    const double Ttr_ANN  = 67119.1243435846;
+    const double Tve_ANN  = 20036.7997046619;
+    const double Ttr_RRHO = 64987.6649760793;
+    const double Tve_RRHO = 19434.6297147672;
     // std::cout << "Species " << species.second << std::endl;
     // std::cout << "Translational-rotational temperature (Ttr) = " << Ttr << " K" << std::endl;
     // std::cout << "Vibrational-electronic temperature (Tve)   = " << Tve << " K" << std::endl;
     // input: species, mode, Ttr, Tve
     // output: energy
     const int index = species.first - 1;
-    et_ann          = models[ispecies]->ComputeTranslationalEnergy(Ttr, Tve);
-    er_ann          = models[ispecies]->ComputeRotationalEnergy(Ttr, Tve);
-    ev_ann          = models[ispecies]->ComputeVibrationalEnergy(Ttr, Tve);
-    ee_ann          = models[ispecies]->ComputeElectronicEnergy(Ttr, Tve);
-    et_rrho         = 1.5 * R / species_weight[index] * Ttr;
-    er_rrho         = molecule_flag[index] ? 0.5 * R / species_weight[index] * Ttr * lin[index] : 0.0;
-    ev_rrho         = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / Tve) - 1.0) : 0.0;
+    et_ann          = models[ispecies]->ComputeTranslationalEnergy(Ttr_ANN, Tve_ANN);
+    er_ann          = models[ispecies]->ComputeRotationalEnergy(Ttr_ANN, Tve_ANN);
+    ev_ann          = models[ispecies]->ComputeVibrationalEnergy(Ttr_ANN, Tve_ANN);
+    ee_ann          = models[ispecies]->ComputeElectronicEnergy(Ttr_ANN, Tve_ANN);
+    et_rrho         = 1.5 * R / species_weight[index] * Ttr_RRHO;
+    er_rrho         = molecule_flag[index] ? 0.5 * R / species_weight[index] * Ttr_RRHO * lin[index] : 0.0;
+    ev_rrho         = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / Tve_RRHO) - 1.0) : 0.0;
     double num      = 0.0;
     double den      = 0.0;
-    den += ge[index][0] * exp(-thetel[index][0] / Tve);
+    den += ge[index][0] * exp(-thetel[index][0] / Tve_RRHO);
     for (int i = 1; i < thetel[index].size(); i++)
     {
-      num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / Tve);
-      den += ge[index][i] * exp(-thetel[index][i] / Tve);
+      num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / Tve_RRHO);
+      den += ge[index][i] * exp(-thetel[index][i] / Tve_RRHO);
     }
     ee_rrho = R / species_weight[index] * num / den;
     std::cout << std::endl
               << std::endl;
-    e_t_ann += y[ispecies] * (et_ann + er_ann + ev_ann + ee_ann);
-    e_ve_ann += y[ispecies] * (ev_ann + ee_ann);
-    e_t_rrho += y[ispecies] * (et_rrho + er_rrho + ev_rrho + ee_rrho);
-    e_ve_rrho += y[ispecies] * (ev_rrho + ee_rrho);
+    e_t_ann += y_ANN[ispecies] * (et_ann + er_ann + ev_ann + ee_ann);
+    e_ve_ann += y_ANN[ispecies] * (ev_ann + ee_ann);
+    e_t_rrho += y_RRHO[ispecies] * (et_rrho + er_rrho + ev_rrho + ee_rrho);
+    e_ve_rrho += y_RRHO[ispecies] * (ev_rrho + ee_rrho);
     ispecies++;
   }
 #endif

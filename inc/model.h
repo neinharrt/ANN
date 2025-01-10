@@ -15,6 +15,7 @@ namespace ANN
 class Model
 {
   private:
+
     std::vector<std::shared_ptr<NeuralNetwork>> networks_;
 
     std::string species_name_;
@@ -23,70 +24,98 @@ class Model
     int         species_index_;
 
   public:
+
     Model() {};
     ~Model() {};
 
     bool Init(const char *species_name);
 
   public:
-    double ComputeTranslationalEnergy(const double &Ttr, const double &Tve) { return (this->*ComputeTE)(Ttr, Tve); };
-    double ComputeRotationalEnergy(const double &Ttr, const double &Tve) { return (this->*ComputeRE)(Ttr, Tve); };
-    double ComputeVibrationalEnergy(const double &Ttr, const double &Tve) { return (this->*ComputeVE)(Ttr, Tve); };
-    double ComputeElectronicEnergy(const double &Ttr, const double &Tve) { return (this->*ComputeEE)(Ttr, Tve); };
 
-    void ComputeTranslationalCv(double *cv, const double &Ttr, const double &Tve) { return (this->*ComputeTC)(&cv[0], Ttr, Tve); };
-    void ComputeRotationalCv(double *cv, const double &Ttr, const double &Tve) { return (this->*ComputeRC)(&cv[0], Ttr, Tve); };
-    void ComputeVibrationalCv(double *cv, const double &Ttr, const double &Tve) { return (this->*ComputeVC)(&cv[0], Ttr, Tve); };
-    void ComputeElectronicCv(double *cv, const double &Ttr, const double &Tve) { return (this->*ComputeEC)(&cv[0], Ttr, Tve); };
+    double ComputeTranslationalEnergy(const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeTE)(tt, tr, tv, te);
+    };
+    double ComputeRotationalEnergy(const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeRE)(tt, tr, tv, te);
+    };
+    double ComputeVibrationalEnergy(const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeVE)(tt, tr, tv, te);
+    };
+    double ComputeElectronicEnergy(const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeEE)(tt, tr, tv, te);
+    };
 
-  protected:
-    double (Model::*ComputeTE)(const double &Ttr, const double &Tve);
-    double (Model::*ComputeRE)(const double &Ttr, const double &Tve);
-    double (Model::*ComputeVE)(const double &Ttr, const double &Tve);
-    double (Model::*ComputeEE)(const double &Ttr, const double &Tve);
-
-    void (Model::*ComputeTC)(double *cv, const double &Ttr, const double &Tve);
-    void (Model::*ComputeRC)(double *cv, const double &Ttr, const double &Tve);
-    void (Model::*ComputeVC)(double *cv, const double &Ttr, const double &Tve);
-    void (Model::*ComputeEC)(double *cv, const double &Ttr, const double &Tve);
-
-    double ComputeTEAtom(const double &Ttr, const double &Tve);
-    void   ComputeTCAtom(double *cv, const double &Ttr, const double &Tve);
-    double ComputeREAtom(const double &Ttr, const double &Tve);
-    void   ComputeRCAtom(double *cv, const double &Ttr, const double &Tve);
-    double ComputeVEAtom(const double &Ttr, const double &Tve);
-    void   ComputeVCAtom(double *cv, const double &Ttr, const double &Tve);
-    double ComputeEEAtom(const double &Ttr, const double &Tve);
-    void   ComputeECAtom(double *cv, const double &Ttr, const double &Tve);
-
-    double ComputeTEDiatomic(const double &Ttr, const double &Tve);
-    void   ComputeTCDiatomic(double *cv, const double &Ttr, const double &Tve);
-    double ComputeREDiatomic(const double &Ttr, const double &Tve);
-    void   ComputeRCDiatomic(double *cv, const double &Ttr, const double &Tve);
-    double ComputeVEDiatomic(const double &Ttr, const double &Tve);
-    void   ComputeVCDiatomic(double *cv, const double &Ttr, const double &Tve);
-    double ComputeEEDiatomic(const double &Ttr, const double &Tve);
-    void   ComputeECDiatomic(double *cv, const double &Ttr, const double &Tve);
-
-    double ComputeTEPolyatomic(const double &Ttr, const double &Tve);
-    void   ComputeTCPolyatomic(double *cv, const double &Ttr, const double &Tve);
-    double ComputeREPolyatomic(const double &Ttr, const double &Tve);
-    void   ComputeRCPolyatomic(double *cv, const double &Ttr, const double &Tve);
-    double ComputeVEPolyatomic(const double &Ttr, const double &Tve);
-    void   ComputeVCPolyatomic(double *cv, const double &Ttr, const double &Tve);
-    double ComputeEEPolyatomic(const double &Ttr, const double &Tve);
-    void   ComputeECPolyatomic(double *cv, const double &Ttr, const double &Tve);
-
-    double ComputeTEElectron(const double &Ttr, const double &Tve);
-    void   ComputeTCElectron(double *cv, const double &Ttr, const double &Tve);
-    double ComputeREElectron(const double &Ttr, const double &Tve);
-    void   ComputeRCElectron(double *cv, const double &Ttr, const double &Tve);
-    double ComputeVEElectron(const double &Ttr, const double &Tve);
-    void   ComputeVCElectron(double *cv, const double &Ttr, const double &Tve);
-    double ComputeEEElectron(const double &Ttr, const double &Tve);
-    void   ComputeECElectron(double *cv, const double &Ttr, const double &Tve);
+    void ComputeTranslationalCv(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeTC)(&cv[0], tt, tr, tv, te);
+    };
+    void ComputeRotationalCv(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeRC)(&cv[0], tt, tr, tv, te);
+    };
+    void ComputeVibrationalCv(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeVC)(&cv[0], tt, tr, tv, te);
+    };
+    void ComputeElectronicCv(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeEC)(&cv[0], tt, tr, tv, te);
+    };
 
   protected:
+
+    double (Model::*ComputeTE)(const double &tt, const double &tr, const double &tv, const double &te);
+    double (Model::*ComputeRE)(const double &tt, const double &tr, const double &tv, const double &te);
+    double (Model::*ComputeVE)(const double &tt, const double &tr, const double &tv, const double &te);
+    double (Model::*ComputeEE)(const double &tt, const double &tr, const double &tv, const double &te);
+
+    void (Model::*ComputeTC)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void (Model::*ComputeRC)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void (Model::*ComputeVC)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void (Model::*ComputeEC)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+
+    double ComputeTEAtom(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeTCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeREAtom(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeRCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeVEAtom(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeVCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeEEAtom(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeECAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+
+    double ComputeTEDiatomic(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeTCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeREDiatomic(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeRCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeVEDiatomic(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeVCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeEEDiatomic(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeECDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+
+    double ComputeTEPolyatomic(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeTCPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeREPolyatomic(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeRCPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeVEPolyatomic(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeVCPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeEEPolyatomic(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeECPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+
+    double ComputeTEElectron(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeTCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeREElectron(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeRCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeVEElectron(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeVCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    double ComputeEEElectron(const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeECElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+
+  protected:
+
     const double R_ = 8.31446261815324;  // Universal gas constant (J/K-mol)
 
     const std::vector<std::string> species_pack_ = {
