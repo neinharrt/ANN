@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -314,6 +316,7 @@ int main(void)
       {
         if (species_name[i].compare(gas) == 0)
           species_pack.insert({i + 1, species_name[i]});
+        nspecies++;
       }
     }
   }
@@ -343,19 +346,19 @@ int main(void)
     index++;
   }
 
-  double et_ann  = 0.0;  // Translational energy of N2 [J/kg]
-  double er_ann  = 0.0;  // Rotational energy of N2 [J/kg]
-  double ev_ann  = 0.0;  // Vibrational energy of N2 [J/kg]
-  double ee_ann  = 0.0;  // Electronic energy of N2 [J/kg]
-  double et_rrho = 0.0;
-  double er_rrho = 0.0;
-  double ev_rrho = 0.0;
-  double ee_rrho = 0.0;
+  double et_ann      = 0.0;  // Translational energy of N2 [J/kg]
+  double er_ann      = 0.0;  // Rotational energy of N2 [J/kg]
+  double ev_ann      = 0.0;  // Vibrational energy of N2 [J/kg]
+  double ee_ann      = 0.0;  // Electronic energy of N2 [J/kg]
+  double et_rrho_cal = 0.0;
+  double er_rrho_cal = 0.0;
+  double ev_rrho_cal = 0.0;
+  double ee_rrho_cal = 0.0;
 
-  std::vector<double> CvT(2, 0.0);
-  std::vector<double> CvR(2, 0.0);
-  std::vector<double> CvV(2, 0.0);
-  std::vector<double> CvE(2, 0.0);
+  // std::vector<double> CvT(2, 0.0);
+  // std::vector<double> CvR(2, 0.0);
+  // std::vector<double> CvV(2, 0.0);
+  // std::vector<double> CvE(2, 0.0);
 
   std::cout << std::setprecision(8) << std::scientific << std::uppercase;
   std::string data_direc = "./database";
@@ -448,57 +451,309 @@ int main(void)
     ispecies++;
   }
 #endif
-#ifdef TEST
-  ispecies = 0;
+#ifdef COMP
+  ispecies                             = 0;
+  const std::string   valid_data_direc = "../chem_prop_4t/chem_prop/output/";
+  const std::string   valid_file_name  = "val_en_N.plt";
+  std::vector<double> tt, tr, tv, te;
+  std::vector<double> es, es_rrho, es_janaf;
+  std::vector<double> er, ev, ee, er_rrho, ev_rrho, ee_rrho;
+  std::ifstream       valid_file(valid_data_direc + valid_file_name);
+  if (valid_file.is_open())
+  {
+    std::string line;
+    getline(valid_file, line);
+    while (getline(valid_file, line))
+    {
+      std::stringstream ss(line);
+      double            temp1, temp2, temp3, temp4, es_tmp, es_rrho_tmp, es_janaf_tmp;
+      double            er_tmp, ev_tmp, ee_tmp, er_rrho_tmp, ev_rrho_tmp, ee_rrho_tmp;
+      ss >> temp1 >> temp2 >> temp3 >> temp4 >> es_tmp >> es_rrho_tmp >> es_janaf_tmp >> er_tmp >> ev_tmp >> ee_tmp >> er_rrho_tmp >> ev_rrho_tmp >> ee_rrho_tmp;
+      tt.push_back(temp1);
+      tr.push_back(temp2);
+      tv.push_back(temp3);
+      te.push_back(temp4);
+      es.push_back(es_tmp);
+      es_rrho.push_back(es_rrho_tmp);
+      es_janaf.push_back(es_janaf_tmp);
+      er.push_back(er_tmp);
+      ev.push_back(ev_tmp);
+      ee.push_back(ee_tmp);
+      er_rrho.push_back(er_rrho_tmp);
+      ev_rrho.push_back(ev_rrho_tmp);
+      ee_rrho.push_back(ee_rrho_tmp);
+    }
+  }
+  else
+  {
+    std::cout << "Fail to open validation file\n";
+  }
+
   for (auto &species : species_pack)
   {
     const double Ttr_ANN  = 67119.1243435846;
     const double Tve_ANN  = 20036.7997046619;
     const double Ttr_RRHO = 64987.6649760793;
     const double Tve_RRHO = 19434.6297147672;
-    const double tt       = 400.0;
-    const double tr       = 400.0;
-    const double tv       = 400.0;
-    const double te       = 400.0;
-    // std::cout << "Species " << species.second << std::endl;
-    // std::cout << "Translational-rotational temperature (Ttr) = " << Ttr << " K" << std::endl;
-    // std::cout << "Vibrational-electronic temperature (Tve)   = " << Tve << " K" << std::endl;
     // input: species, mode, Ttr, Tve
     // output: energy
-    const int index = species.first - 1;
-    et_ann          = models[ispecies]->ComputeTranslationalEnergy(tt, tr, tv, te);
-    er_ann          = models[ispecies]->ComputeRotationalEnergy(tt, tr, tv, te);
-    ev_ann          = models[ispecies]->ComputeVibrationalEnergy(tt, tr, tv, te);
-    ee_ann          = models[ispecies]->ComputeElectronicEnergy(tt, tr, tv, te);
-    et_rrho         = 1.5 * R / species_weight[index] * Ttr_RRHO;
-    er_rrho         = molecule_flag[index] ? 0.5 * R / species_weight[index] * Ttr_RRHO * lin[index] : 0.0;
-    ev_rrho         = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / Tve_RRHO) - 1.0) : 0.0;
-    double num      = 0.0;
-    double den      = 0.0;
-    den += ge[index][0] * exp(-thetel[index][0] / Tve_RRHO);
-    for (int i = 1; i < thetel[index].size(); i++)
+    const int           index     = species.first - 1;
+    double              MSE_r     = 0.0;
+    double              MSE_v     = 0.0;
+    double              MSE_e     = 0.0;
+    double              max_err_r = std::numeric_limits<double>::min();
+    double              max_err_v = std::numeric_limits<double>::min();
+    double              max_err_e = std::numeric_limits<double>::min();
+    double              min_err_r = std::numeric_limits<double>::max();
+    double              min_err_v = std::numeric_limits<double>::max();
+    double              min_err_e = std::numeric_limits<double>::max();
+    int                 max_index = 0;
+    int                 min_index = 0;
+    double              max_ee    = 0.0;
+    double              min_ee    = 0.0;
+    std::vector<double> err_ee;
+    err_ee.resize(tt.size());
+    std::vector<double> ees_ann;
+    for (int i = 0; i < tt.size(); i++)
     {
-      num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / Tve_RRHO);
-      den += ge[index][i] * exp(-thetel[index][i] / Tve_RRHO);
+      et_ann = models[ispecies]->ComputeTranslationalEnergy(tt[i], tr[i], tv[i], te[i]);
+      er_ann = models[ispecies]->ComputeRotationalEnergy(tt[i], tr[i], tv[i], te[i]);
+      ev_ann = models[ispecies]->ComputeVibrationalEnergy(tt[i], tr[i], tv[i], te[i]);
+      ee_ann = models[ispecies]->ComputeElectronicEnergy(tt[i], tr[i], tv[i], te[i]);
+      ees_ann.push_back(ee_ann);
+      et_rrho_cal = 1.5 * R / species_weight[index] * Ttr_RRHO;
+      er_rrho_cal = molecule_flag[index] ? 0.5 * R / species_weight[index] * Ttr_RRHO * lin[index] : 0.0;
+      ev_rrho_cal = molecule_flag[index] ? R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / Tve_RRHO) - 1.0) : 0.0;
+      double num  = 0.0;
+      double den  = 0.0;
+      den += ge[index][0] * exp(-thetel[index][0] / Tve_RRHO);
+      for (int i = 1; i < thetel[index].size(); i++)
+      {
+        num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / Tve_RRHO);
+        den += ge[index][i] * exp(-thetel[index][i] / Tve_RRHO);
+      }
+      ee_rrho[0] = R / species_weight[index] * num / den;
+      e_t_ann += y_ANN[ispecies] * (et_ann + er_ann + ev_ann + ee_ann);
+      e_ve_ann += y_ANN[ispecies] * (ev_ann + ee_ann);
+      e_t_rrho += y_RRHO[ispecies] * (et_rrho_cal + er_rrho_cal + ev_rrho_cal + ee_rrho_cal);
+      e_ve_rrho += y_RRHO[ispecies] * (ev_rrho_cal + ee_rrho_cal);
+      MSE_r += pow(er_ann - er[i] * 1e-4, 2);
+      MSE_v += pow(ev_ann - ev[i] * 1e-4, 2);
+      MSE_e += pow(ee_ann - ee[i] * 1e-4, 2);
+      // if (max_err_r < std::abs(er_ann - er[i]) / er[i] * 100.0)
+      // {
+      //   max_err_r = std::abs(er_ann - er[i]) / er[i] * 100.0;
+      //   max_index = i;
+      // }
+      // if (max_err_v < std::abs(ev_ann - ev[i]) / ev[i] * 100.0)
+      // {
+      //   max_err_v = std::abs(ev_ann - ev[i]) / ev[i] * 100.0;
+      //   max_index = i;
+      // }
+      err_ee[i] = std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0;
+      if (max_err_e < (std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0))
+      {
+        if (ee_ann < 1.e+0)
+          continue;
+        max_err_e = std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0;
+        max_index = i;
+        max_ee    = ee_ann;
+      }
+      if (min_err_e > (std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0))
+      {
+        min_err_e = std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0;
+        min_index = i;
+        min_ee    = ee_ann;
+      }
+      // max_err_r = std::max(max_err_r, std::abs(er_ann - er[i]) / er[i] * 100.0);
+      // max_err_v = std::max(max_err_v, std::abs(ev_ann - ev[i]) / ev[i] * 100.0);
+      // max_err_e = std::max(max_err_e, std::abs(ee_ann - ee[i]) / ee[i] * 100.0);
+      // min_err_r = std::min(min_err_r, std::abs(er_ann - er[i] * 1.e-4) / (er[i] * 1.e-4) * 100.0);
+      // min_err_v = std::min(min_err_v, std::abs(ev_ann - ev[i] * 1.e-4) / (ev[i] * 1.e-4) * 100.0);
+      // min_err_e = std::min(min_err_e, std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0);
     }
-    ee_rrho = R / species_weight[index] * num / den;
-    std::cout << std::endl
-              << std::endl;
-    e_t_ann += y_ANN[ispecies] * (et_ann + er_ann + ev_ann + ee_ann);
-    e_ve_ann += y_ANN[ispecies] * (ev_ann + ee_ann);
-    e_t_rrho += y_RRHO[ispecies] * (et_rrho + er_rrho + ev_rrho + ee_rrho);
-    e_ve_rrho += y_RRHO[ispecies] * (ev_rrho + ee_rrho);
+    MSE_r = sqrt(MSE_r);
+    MSE_v = sqrt(MSE_v);
+    MSE_e = sqrt(MSE_e);
+
+    MSE_r /= er.size();
+    MSE_v /= ev.size();
+    MSE_e /= ee.size();
+    // std::cout << "MSE_r of species " << species.second << " = " << MSE_r << std::endl;
+    // std::cout << "max error of species " << species.second << " = " << max_err_r << std::endl;
+    // std::cout << "min error of species " << species.second << " = " << min_err_r << std::endl;
+    // std::cout << "MSE_v of species " << species.second << " = " << MSE_v << std::endl;
+    // std::cout << "max error of species " << species.second << " = " << max_err_v << std::endl;
+    // std::cout << "min error of species " << species.second << " = " << min_err_v << std::endl;
+    std::cout << "MSE_e of species " << species.second << " = " << MSE_e << std::endl;
+    std::cout << "max error of species " << species.second << " = " << max_err_e << std::endl;
+    std::cout << "tt = " << tt[max_index] << ", tr = " << tr[max_index] << ", tv = " << tv[max_index] << ", te = " << te[max_index] << std::endl;
+    std::cout << "max ee = " << max_ee << std::endl;
+    std::cout << "ee = " << ee[max_index] << std::endl;
+    std::cout << "min error of species " << species.second << " = " << min_err_e << std::endl;
+    std::cout << "tt = " << tt[min_index] << ", tr = " << tr[min_index] << ", tv = " << tv[min_index] << ", te = " << te[min_index] << std::endl;
+    std::cout << "min ee = " << min_ee << std::endl;
+    std::cout << "ee = " << ee[min_index] << std::endl;
     ispecies++;
+    // write to file
+    std::ofstream out_file(species.second + "_ee.dat");
+    out_file << std::setprecision(8) << std::scientific << std::uppercase;
+    // out_file << "variables = \"tt\", \"tr\", \"tv\", \"te\", \"ee\", \"ee_err\"\n";
+    for (int i = 0; i < tt.size(); i++)
+    {
+      out_file << tt[i] << "\t" << tr[i] << "\t" << tv[i] << "\t" << te[i] << "\t" << ees_ann[i] << "\t" << err_ee[i] << "\n";
+    }
+    out_file.close();
   }
 #endif
+#ifdef TEST
+  ispecies              = 0;
+  const double ttr      = 30000.0;
+  const double tve      = 30000.0;
+  const double rho      = 0.1;
+  const double pressure = rho * R / species_weight[0] * ttr;
+  double       et, er, ev, ee;
+  double       cvtt, cvtr, cvtv, cvte;
+  double       cvrt, cvrr, cvrv, cvre;
+  double       cvvt, cvvr, cvvv, cvve;
+  double       cvet, cver, cvev, cvee;
+  double       cvtt2, cvtr2, cvtv2, cvte2;
+  double       cvrt2, cvrr2, cvrv2, cvre2;
+  double       cvvt2, cvvr2, cvvv2, cvve2;
+  double       cvet2, cver2, cvev2, cvee2;
+  double       ee_rrho;
+  double       cvet_rrho, cver_rrho, cvev_rrho, cvee_rrho;
+  double       speed_of_sound, speed_of_sound_rrho;
+  for (auto &species : species_pack)
+  {
+    double       cv[2];
+    const double et = models[ispecies]->ComputeTranslationalEnergy(ttr, ttr, tve, tve);
+    models[ispecies]->ComputeTranslationalCv(&cv[0], ttr, ttr, tve, tve);
+    cvtt = cv[0];
+    cvtr = cv[1];
+    cvtv = cv[2];
+    cvte = cv[3];
+    models[ispecies]->ComputeTranslationalCv2(&cv[0], ttr, ttr, tve, tve);
+    cvtt2 = cv[0];
+    cvtr2 = cv[1];
+    cvtv2 = cv[2];
+    cvte2 = cv[3];
 
-  std::cout << "Total energy from ANN model = " << e_t_ann << std::endl;
-  std::cout << "VE energy from ANN model = " << e_ve_ann << std::endl;
-  std::cout << "Total energy from RRHO model = " << e_t_rrho << std::endl;
-  std::cout << "VE energy from RRHO model = " << e_ve_rrho << std::endl;
-  std::cout << std::fixed << std::setprecision(4);
-  std::cout << "Diff. of total energy = " << fabs(e_t_ann - e_t_rrho) / e_t_ann * 100.0 << " %" << std::endl;
-  std::cout << "Diff. of VE energy = " << fabs(e_ve_ann - e_ve_rrho) / e_ve_ann * 100.0 << " %" << std::endl;
+    const double er = models[ispecies]->ComputeRotationalEnergy(ttr, ttr, tve, tve);
+    models[ispecies]->ComputeRotationalCv(&cv[0], ttr, ttr, tve, tve);
+    cvrt = cv[0];
+    cvrr = cv[1];
+    cvrv = cv[2];
+    cvre = cv[3];
+    models[ispecies]->ComputeRotationalCv2(&cv[0], ttr, ttr, tve, tve);
+    cvrt2 = cv[0];
+    cvrr2 = cv[1];
+    cvrv2 = cv[2];
+    cvre2 = cv[3];
+
+    const double ev = models[ispecies]->ComputeVibrationalEnergy(ttr, ttr, tve, tve);
+    models[ispecies]->ComputeVibrationalCv(&cv[0], ttr, ttr, tve, tve);
+    cvvt = cv[0];
+    cvvr = cv[1];
+    cvvv = cv[2];
+    cvve = cv[3];
+    models[ispecies]->ComputeVibrationalCv2(&cv[0], ttr, ttr, tve, tve);
+    cvvt2 = cv[0];
+    cvvr2 = cv[1];
+    cvvv2 = cv[2];
+    cvve2 = cv[3];
+
+    const double ee = models[ispecies]->ComputeElectronicEnergy(ttr, ttr, tve, tve);
+    models[ispecies]->ComputeElectronicCv(&cv[0], ttr, ttr, tve, tve);
+    cvet = cv[0];
+    cver = cv[1];
+    cvev = cv[2];
+    cvee = cv[3];
+    models[ispecies]->ComputeElectronicCv2(&cv[0], ttr, ttr, tve, tve);
+    cvet2 = cv[0];
+    cver2 = cv[1];
+    cvev2 = cv[2];
+    cvee2 = cv[3];
+
+    double f      = 0.0;
+    double g      = 0.0;
+    double fprime = 0.0;
+    double gprime = 0.0;
+    index         = 0;
+    g += ge[index][0] * exp(-thetel[index][0] / tve);
+    gprime += ge[index][0] * thetel[index][0] / tve / tve * exp(-thetel[index][0] / tve);
+    for (int i = 1; i < thetel[index].size(); i++)
+    {
+      g += ge[index][i] * exp(-thetel[index][i] / tve);
+      f += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / tve);
+      gprime += ge[index][i] * thetel[index][i] / tve / tve * exp(-thetel[index][i] / tve);
+      fprime += ge[index][i] * thetel[index][i] * thetel[index][i] / tve / tve * exp(-thetel[index][i] / tve);
+    }
+    ee_rrho   = f / g * R / species_weight[index];
+    cvet_rrho = 0.0;
+    cver_rrho = 0.0;
+    cvev_rrho = (fprime * g - f * gprime) / g / g;
+    cvee_rrho = (fprime * g - f * gprime) / g / g;
+    ispecies++;
+    const double A         = cvtt + cvrt + cvvt + cvet;
+    const double B         = cvtv + cvrv + cvvv + cvev;
+    const double C         = cvvt + cvet;
+    const double D         = cvvv + cvev;
+    const double N         = 1.0 / (A * D - B * C) / rho;
+    const double beta      = N * rho * R / species_weight[0] * D;
+    const double beta_rrho = 1.0 / (rho * cvtt) * rho * R / species_weight[0];
+    speed_of_sound         = sqrt((1.0 + beta) * pressure / rho);
+    speed_of_sound_rrho    = sqrt((1.0 + beta_rrho) * pressure / rho);
+  }
+
+  // std::cout << "cvtt = " << cvtt << std::endl;
+  // std::cout << "cvtr = " << cvtr << std::endl;
+  // std::cout << "cvtv = " << cvtv << std::endl;
+  // std::cout << "cvte = " << cvte << std::endl;
+
+  // std::cout << "cvrt = " << cvrt << std::endl;
+  // std::cout << "cvrr = " << cvrr << std::endl;
+  // std::cout << "cvrv = " << cvrv << std::endl;
+  // std::cout << "cvre = " << cvre << std::endl;
+
+  // std::cout << "cvvt = " << cvvt << std::endl;
+  // std::cout << "cvvr = " << cvvr << std::endl;
+  // std::cout << "cvvv = " << cvvv << std::endl;
+  // std::cout << "cvve = " << cvve << std::endl;
+
+  // std::cout << "cvet = " << cvet << std::endl;
+  // std::cout << "cver = " << cver << std::endl;
+  // std::cout << "cvev = " << cvev << std::endl;
+  std::cout << "ee = " << ee << std::endl;
+  std::cout << "ee_rrho = " << ee_rrho << std::endl;
+  std::cout << "cvee = " << cvee << std::endl;
+  std::cout << "cvee_rrho = " << cvee_rrho << std::endl;
+
+  const double error = std::abs(cvee_rrho - cvee) / cvee * 100.0;
+  std::cout << "error = " << error << std::endl;
+  std::cout << "speed of sound = " << speed_of_sound << std::endl;
+  std::cout << "speed of sound rrho = " << speed_of_sound_rrho << std::endl;
+  const double err = std::abs(speed_of_sound - speed_of_sound_rrho) / speed_of_sound * 100.0;
+  std::cout << "err = " << err << std::endl;
+  const double ktrtr = 2.5 * cvtt + cvtr + cvrt + cvrr;
+  const double ktrve = cvtv + cvte + cvrv + cvre;
+  const double kvetr = cvvt + cvvr + cvet + cver;
+  const double kveve = cvvv + cvve + cvev + cvee;
+
+  // std::cout << "ktrtr = " << ktrtr << std::endl;
+  // std::cout << "ktrve = " << ktrve << std::endl;
+  // std::cout << "kvetr = " << kvetr << std::endl;
+  // std::cout << "kveve = " << kveve << std::endl;
+
+#endif
+
+  // std::cout << "Total energy from ANN model = " << e_t_ann << std::endl;
+  // std::cout << "VE energy from ANN model = " << e_ve_ann << std::endl;
+  // std::cout << "Total energy from RRHO model = " << e_t_rrho << std::endl;
+  // std::cout << "VE energy from RRHO model = " << e_ve_rrho << std::endl;
+  // std::cout << std::fixed << std::setprecision(4);
+  // std::cout << "Diff. of total energy = " << fabs(e_t_ann - e_t_rrho) / e_t_ann * 100.0 << " %" << std::endl;
+  // std::cout << "Diff. of VE energy = " << fabs(e_ve_ann - e_ve_rrho) / e_ve_ann * 100.0 << " %" << std::endl;
 
   return 0;
 }

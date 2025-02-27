@@ -90,6 +90,18 @@ void NeuralNetwork::Derivative(const double *x, double *dfdx) const
     dfdx[3] += (temp * Ai_[i * 4 + 3]);
   }
 }
+void NeuralNetwork::Derivative2(const double *x, double *dfdx) const
+{
+  dfdx[0] = dfdx[1] = dfdx[2] = dfdx[3] = 0.0;
+  for (int i = 0; i < m; i++)
+  {
+    const double temp = DiffTransfer(Ai_[i * 4 + 0] * x[0] + Ai_[i * 4 + 1] * x[1] + Ai_[i * 4 + 2] * x[2] + Ai_[i * 4 + 3] * x[3] + bi_[i]) * Ao_[i];
+    dfdx[0] += (temp * Ai_[i * 4 + 0] * Ao_[i]);
+    dfdx[1] += (temp * Ai_[i * 4 + 1] * Ao_[i]);
+    dfdx[2] += (temp * Ai_[i * 4 + 2] * Ao_[i]);
+    dfdx[3] += (temp * Ai_[i * 4 + 3] * Ao_[i]);
+  }
+}
 inline double NeuralNetwork::Transfer(const double input) const
 {
   return 2.0 / (1.0 + std::exp(-2.0 * input)) - 1.0;

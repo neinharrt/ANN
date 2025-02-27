@@ -45,6 +45,7 @@ class NeuralNetwork
     bool Init(const int &molecule_flag, const int &mode_index, const std::string &species_name);
     void Pred(const double *x, double *f) const;
     void Derivative(const double *x, double *dfdx) const;
+    void Derivative2(const double *x, double *dfdx) const;
 
   private:
 

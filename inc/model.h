@@ -66,6 +66,23 @@ class Model
       return (this->*ComputeEC)(&cv[0], tt, tr, tv, te);
     };
 
+    void ComputeTranslationalCv2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeTC2)(&cv[0], tt, tr, tv, te);
+    };
+    void ComputeRotationalCv2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeRC2)(&cv[0], tt, tr, tv, te);
+    };
+    void ComputeVibrationalCv2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeVC2)(&cv[0], tt, tr, tv, te);
+    };
+    void ComputeElectronicCv2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+    {
+      return (this->*ComputeEC2)(&cv[0], tt, tr, tv, te);
+    };
+
   protected:
 
     double (Model::*ComputeTE)(const double &tt, const double &tr, const double &tv, const double &te);
@@ -78,41 +95,62 @@ class Model
     void (Model::*ComputeVC)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     void (Model::*ComputeEC)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
 
+    void (Model::*ComputeTC2)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void (Model::*ComputeRC2)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void (Model::*ComputeVC2)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void (Model::*ComputeEC2)(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+
     double ComputeTEAtom(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeTCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeTCAtom2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeREAtom(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeRCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeRCAtom2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeVEAtom(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeVCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeVCAtom2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeEEAtom(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeECAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeECAtom2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
 
     double ComputeTEDiatomic(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeTCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeTCDiatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeREDiatomic(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeRCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeRCDiatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeVEDiatomic(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeVCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeVCDiatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeEEDiatomic(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeECDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeECDiatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
 
     double ComputeTEPolyatomic(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeTCPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeTCPolyatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeREPolyatomic(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeRCPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeRCPolyatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeVEPolyatomic(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeVCPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeVCPolyatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeEEPolyatomic(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeECPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeECPolyatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
 
     double ComputeTEElectron(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeTCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeTCElectron2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeREElectron(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeRCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeRCElectron2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeVEElectron(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeVCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeVCElectron2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
     double ComputeEEElectron(const double &tt, const double &tr, const double &tv, const double &te);
     void   ComputeECElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
+    void   ComputeECElectron2(double *cv, const double &tt, const double &tr, const double &tv, const double &te);
 
   protected:
 
