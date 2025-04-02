@@ -8,7 +8,7 @@ OBJ=$(OBJ_DIR)/neural_network.o\
 
 TARGET=libann
 
-.PHONY : all clean test remake write
+.PHONY : all clean test remake write valid
 
 all : mkobj $(TARGET)
 
@@ -22,6 +22,10 @@ test : all
 
 write : all
 	$(CC) -c -DWRITE main_example.cpp -o $(OBJ_DIR)/main_example.o -I./inc
+	$(CC) -o test $(OBJ_DIR)/main_example.o -L./lib -lann -static
+
+valid : all
+	$(CC) -c -DCOMP main_example.cpp -o $(OBJ_DIR)/main_example.o -I./inc
 	$(CC) -o test $(OBJ_DIR)/main_example.o -L./lib -lann -static
 
 $(TARGET) : $(OBJ)

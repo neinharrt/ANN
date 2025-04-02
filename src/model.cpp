@@ -42,7 +42,9 @@ bool Model::Init(const char *species_name)
       for (int i = 0; i < 1; i++)
       {
         networks_[i] = std::make_shared<NeuralNetwork>();
-        networks_[i]->Init(molecule_flag_, i, species_name_);
+        bool nflag   = networks_[i]->Init(molecule_flag_, i, species_name_);
+        if (!nflag)
+          std::cout << "Failed to initialize neural network for species " << species_name_ << std::endl;
       }
       break;
     }

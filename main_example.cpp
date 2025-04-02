@@ -343,6 +343,8 @@ int main(void)
   {
     models[index] = std::make_shared<ANN::Model>();
     init_flag     = models[index]->Init(species.second.c_str());
+    if (!init_flag)
+      std::cout << "Fail to initialize models for species " << species.second << std::endl;
     index++;
   }
 
@@ -452,45 +454,49 @@ int main(void)
   }
 #endif
 #ifdef COMP
-  ispecies                             = 0;
-  const std::string   valid_data_direc = "../chem_prop_4t/chem_prop/output/";
-  const std::string   valid_file_name  = "val_en_N.plt";
-  std::vector<double> tt, tr, tv, te;
-  std::vector<double> es, es_rrho, es_janaf;
-  std::vector<double> er, ev, ee, er_rrho, ev_rrho, ee_rrho;
-  std::ifstream       valid_file(valid_data_direc + valid_file_name);
-  if (valid_file.is_open())
-  {
-    std::string line;
-    getline(valid_file, line);
-    while (getline(valid_file, line))
-    {
-      std::stringstream ss(line);
-      double            temp1, temp2, temp3, temp4, es_tmp, es_rrho_tmp, es_janaf_tmp;
-      double            er_tmp, ev_tmp, ee_tmp, er_rrho_tmp, ev_rrho_tmp, ee_rrho_tmp;
-      ss >> temp1 >> temp2 >> temp3 >> temp4 >> es_tmp >> es_rrho_tmp >> es_janaf_tmp >> er_tmp >> ev_tmp >> ee_tmp >> er_rrho_tmp >> ev_rrho_tmp >> ee_rrho_tmp;
-      tt.push_back(temp1);
-      tr.push_back(temp2);
-      tv.push_back(temp3);
-      te.push_back(temp4);
-      es.push_back(es_tmp);
-      es_rrho.push_back(es_rrho_tmp);
-      es_janaf.push_back(es_janaf_tmp);
-      er.push_back(er_tmp);
-      ev.push_back(ev_tmp);
-      ee.push_back(ee_tmp);
-      er_rrho.push_back(er_rrho_tmp);
-      ev_rrho.push_back(ev_rrho_tmp);
-      ee_rrho.push_back(ee_rrho_tmp);
-    }
-  }
-  else
-  {
-    std::cout << "Fail to open validation file\n";
-  }
-
   for (auto &species : species_pack)
   {
+    ispecies                           = 0;
+    const std::string valid_data_direc = "../chem_prop_4t/chem_prop/output/";
+    std::string       valid_file_name  = "val_en_";
+    valid_file_name.append(species.second);
+    valid_file_name.append(".plt");
+    std::cout << valid_file_name << std::endl;
+    std::vector<double> tt, tr, tv, te;
+    std::vector<double> es, es_rrho, es_janaf;
+    std::vector<double> er, ev, ee, er_rrho, ev_rrho, ee_rrho;
+    std::ifstream       valid_file(valid_data_direc + valid_file_name);
+    if (valid_file.is_open())
+    {
+      std::string line;
+      getline(valid_file, line);
+      while (getline(valid_file, line))
+      {
+        std::stringstream ss(line);
+        double            temp1, temp2, temp3, temp4, es_tmp, es_rrho_tmp, es_janaf_tmp;
+        double            er_tmp, ev_tmp, ee_tmp, er_rrho_tmp, ev_rrho_tmp, ee_rrho_tmp;
+        ss >> temp1 >> temp2 >> temp3 >> temp4 >> es_tmp >> es_rrho_tmp >> es_janaf_tmp >> er_tmp >> ev_tmp >> ee_tmp >> er_rrho_tmp >> ev_rrho_tmp >> ee_rrho_tmp;
+        tt.push_back(temp1);
+        tr.push_back(temp2);
+        tv.push_back(temp3);
+        te.push_back(temp4);
+        es.push_back(es_tmp);
+        es_rrho.push_back(es_rrho_tmp);
+        es_janaf.push_back(es_janaf_tmp);
+        er.push_back(er_tmp);
+        ev.push_back(ev_tmp);
+        ee.push_back(ee_tmp);
+        er_rrho.push_back(er_rrho_tmp);
+        ev_rrho.push_back(ev_rrho_tmp);
+        ee_rrho.push_back(ee_rrho_tmp);
+      }
+    }
+    else
+    {
+      std::cout << "Fail to open validation file\n";
+    }
+    valid_file.close();
+
     const double Ttr_ANN  = 67119.1243435846;
     const double Tve_ANN  = 20036.7997046619;
     const double Ttr_RRHO = 64987.6649760793;
@@ -514,6 +520,8 @@ int main(void)
     std::vector<double> err_ee;
     err_ee.resize(tt.size());
     std::vector<double> ees_ann;
+    double              avg_err     = 0.0;
+    int                 num_abv_tol = 0;
     for (int i = 0; i < tt.size(); i++)
     {
       et_ann = models[ispecies]->ComputeTranslationalEnergy(tt[i], tr[i], tv[i], te[i]);
@@ -551,9 +559,13 @@ int main(void)
       //   max_index = i;
       // }
       err_ee[i] = std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0;
+      if (ee_ann > 10.0)
+        avg_err += err_ee[i];
+      if ((err_ee[i] > 10.0))
+        num_abv_tol++;
       if (max_err_e < (std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0))
       {
-        if (ee_ann < 1.e+0)
+        if ((ee_ann < 1.E+1) || (ee[i] * 1.E-4 < 1.E+1))
           continue;
         max_err_e = std::abs(ee_ann - ee[i] * 1.e-4) / (ee[i] * 1.e-4) * 100.0;
         max_index = i;
@@ -585,15 +597,18 @@ int main(void)
     // std::cout << "MSE_v of species " << species.second << " = " << MSE_v << std::endl;
     // std::cout << "max error of species " << species.second << " = " << max_err_v << std::endl;
     // std::cout << "min error of species " << species.second << " = " << min_err_v << std::endl;
-    std::cout << "MSE_e of species " << species.second << " = " << MSE_e << std::endl;
     std::cout << "max error of species " << species.second << " = " << max_err_e << std::endl;
     std::cout << "tt = " << tt[max_index] << ", tr = " << tr[max_index] << ", tv = " << tv[max_index] << ", te = " << te[max_index] << std::endl;
+    std::cout << max_index << std::endl;
     std::cout << "max ee = " << max_ee << std::endl;
     std::cout << "ee = " << ee[max_index] << std::endl;
     std::cout << "min error of species " << species.second << " = " << min_err_e << std::endl;
     std::cout << "tt = " << tt[min_index] << ", tr = " << tr[min_index] << ", tv = " << tv[min_index] << ", te = " << te[min_index] << std::endl;
     std::cout << "min ee = " << min_ee << std::endl;
     std::cout << "ee = " << ee[min_index] << std::endl;
+    avg_err /= ee.size();
+    std::cout << "avg error of species " << species.second << " = " << avg_err << std::endl;
+    std::cout << "Number of points which above 10: " << num_abv_tol << std::endl;
     ispecies++;
     // write to file
     std::ofstream out_file(species.second + "_ee.dat");
@@ -602,6 +617,7 @@ int main(void)
     for (int i = 0; i < tt.size(); i++)
     {
       out_file << tt[i] << "\t" << tr[i] << "\t" << tv[i] << "\t" << te[i] << "\t" << ees_ann[i] << "\t" << err_ee[i] << "\n";
+      // out_file << tt[i] << "\t" << tr[i] << "\t" << tv[i] << "\t" << te[i] << "\t" << ees_ann[i] << "\n";
     }
     out_file.close();
   }
