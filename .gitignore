@@ -45,3 +45,6 @@ compile_flags.txt
 
 # Visual Studio Code
 .vscode/
+
+# config file
+config.dat
