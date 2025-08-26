@@ -37,6 +37,9 @@ test
 
 # Database folder
 database/
+validation/
+model/
+*.dat
 
 # Compile options for nvim
 compile_flags.txt
