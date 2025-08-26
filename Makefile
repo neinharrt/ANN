@@ -1,6 +1,6 @@
 CC=g++
 #CFLAGS=-Ofast -w -std=c++14 -fPIC
-CFALGS=-Ofast -static
+CFALGS=-O2 -static -std=c++20
 
 OBJ_DIR=obj
 OBJ=$(OBJ_DIR)/neural_network.o\
@@ -22,6 +22,14 @@ test : all
 
 write : all
 	$(CC) -c -DWRITE main_example.cpp -o $(OBJ_DIR)/main_example.o -I./inc
+	$(CC) -o test $(OBJ_DIR)/main_example.o -L./lib -lann -static
+
+time : all
+	$(CC) -c -DTIME main_example.cpp -o $(OBJ_DIR)/main_example.o -I./inc
+	$(CC) -o test $(OBJ_DIR)/main_example.o -L./lib -lann -static
+
+valid : all
+	$(CC) -c -DVALID main_example.cpp -o $(OBJ_DIR)/main_example.o -I./inc
 	$(CC) -o test $(OBJ_DIR)/main_example.o -L./lib -lann -static
 
 $(TARGET) : $(OBJ)
