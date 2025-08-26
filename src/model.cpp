@@ -33,18 +33,12 @@ bool Model::Init(const char *species_name)
       ComputeVC = &Model::ComputeVCAtom;
       ComputeEC = &Model::ComputeECAtom;
 
-      ComputeTC2 = &Model::ComputeTCAtom2;
-      ComputeRC2 = &Model::ComputeRCAtom2;
-      ComputeVC2 = &Model::ComputeVCAtom2;
-      ComputeEC2 = &Model::ComputeECAtom2;
-
       networks_.resize(1);
       for (int i = 0; i < 1; i++)
       {
-        networks_[i] = std::make_shared<NeuralNetwork>();
-        bool nflag   = networks_[i]->Init(molecule_flag_, i, species_name_);
-        if (!nflag)
-          std::cout << "Failed to initialize neural network for species " << species_name_ << std::endl;
+        networks_[i] = std::static_pointer_cast<NeuralNetworkAtom>(std::make_shared<NeuralNetwork>());
+        bool nflag   = networks_[i]->Init(i, species_name_);
+        if (!nflag) std::cout << "Failed to initialize neural network for species " << species_name_ << std::endl;
       }
       break;
     }
@@ -59,16 +53,11 @@ bool Model::Init(const char *species_name)
       ComputeVC = &Model::ComputeVCDiatomic;
       ComputeEC = &Model::ComputeECDiatomic;
 
-      ComputeTC2 = &Model::ComputeTCDiatomic2;
-      ComputeRC2 = &Model::ComputeRCDiatomic2;
-      ComputeVC2 = &Model::ComputeVCDiatomic2;
-      ComputeEC2 = &Model::ComputeECDiatomic2;
-
       networks_.resize(3);
       for (int i = 0; i < 3; i++)
       {
-        networks_[i] = std::make_shared<NeuralNetwork>();
-        networks_[i]->Init(molecule_flag_, i, species_name_);
+        networks_[i] = std::static_pointer_cast<NeuralNetworkDiatomic>(std::make_shared<NeuralNetwork>());
+        networks_[i]->Init(i, species_name_);
       }
       break;
     case 2:  // Polyatomic molecules
@@ -82,11 +71,6 @@ bool Model::Init(const char *species_name)
       ComputeVC = &Model::ComputeVCPolyatomic;
       ComputeEC = &Model::ComputeECPolyatomic;
 
-      ComputeTC2 = &Model::ComputeTCPolyatomic2;
-      ComputeRC2 = &Model::ComputeRCPolyatomic2;
-      ComputeVC2 = &Model::ComputeVCPolyatomic2;
-      ComputeEC2 = &Model::ComputeECPolyatomic2;
-
       networks_.resize(0);
       break;
     case 3:  // Electron
@@ -99,11 +83,6 @@ bool Model::Init(const char *species_name)
       ComputeRC = &Model::ComputeRCElectron;
       ComputeVC = &Model::ComputeVCElectron;
       ComputeEC = &Model::ComputeECElectron;
-
-      ComputeTC2 = &Model::ComputeTCElectron2;
-      ComputeRC2 = &Model::ComputeRCElectron2;
-      ComputeVC2 = &Model::ComputeVCElectron2;
-      ComputeEC2 = &Model::ComputeECElectron2;
 
       networks_.resize(0);
       break;
@@ -122,32 +101,13 @@ void Model::ComputeTCAtom(double *cv, const double &tt, const double &tr, const 
   cv[0] = 1.5 * R_ / species_weight_;
   cv[1] = cv[2] = cv[3] = 0.0;
 }
-void Model::ComputeTCAtom2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = 1.5 * R_ / species_weight_;
-  cv[1] = cv[2] = cv[3] = 0.0;
-}
-double Model::ComputeREAtom(const double &tt, const double &tr, const double &tv, const double &te)
-{
-  return 0.0;
-}
-void Model::ComputeRCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+double Model::ComputeREAtom(const double &tt, const double &tr, const double &tv, const double &te) { return 0.0; }
+void   Model::ComputeRCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
 }
-void Model::ComputeRCAtom2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
-}
-double Model::ComputeVEAtom(const double &tt, const double &tr, const double &tv, const double &te)
-{
-  return 0.0;
-}
-void Model::ComputeVCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
-}
-void Model::ComputeVCAtom2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+double Model::ComputeVEAtom(const double &tt, const double &tr, const double &tv, const double &te) { return 0.0; }
+void   Model::ComputeVCAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
 }
@@ -160,27 +120,11 @@ double Model::ComputeEEAtom(const double &tt, const double &tr, const double &tv
 }
 void Model::ComputeECAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
-  const double x[4] = {tt, tr, tv, te};
-  double       lnE;
-  networks_[0]->Pred(x, &lnE);
+  double lnE;
+  networks_[0]->Pred(te, &lnE);
   lnE = erg2J * exp(lnE);
-  networks_[0]->Derivative(x, cv);
-  for (int i = 0; i < 4; i++)
-  {
-    cv[i] *= lnE * species_weight_ / R_;
-  }
-}
-void Model::ComputeECAtom2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  const double x[4] = {tt, tr, tv, te};
-  double       lnE;
-  networks_[0]->Pred(x, &lnE);
-  lnE = exp(lnE);
-  networks_[0]->Derivative2(x, cv);
-  for (int i = 0; i < 4; i++)
-  {
-    cv[i] *= lnE * species_weight_ / R_;
-  }
+  networks_[0]->Derivative(te, cv);
+  for (int i = 0; i < 4; i++) { cv[i] *= lnE * species_weight_ / R_; }
 }
 
 double Model::ComputeTEDiatomic(const double &tt, const double &tr, const double &tv, const double &te)
@@ -188,11 +132,6 @@ double Model::ComputeTEDiatomic(const double &tt, const double &tr, const double
   return 1.5 * R_ * tt / species_weight_;
 }
 void Model::ComputeTCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = 1.5 * R_ / species_weight_;
-  cv[1] = cv[2] = cv[3] = 0.0;
-}
-void Model::ComputeTCDiatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   cv[0] = 1.5 * R_ / species_weight_;
   cv[1] = cv[2] = cv[3] = 0.0;
@@ -209,11 +148,6 @@ void Model::ComputeRCDiatomic(double *cv, const double &tt, const double &tr, co
   const double x[4] = {tt, tr, tv, te};
   networks_[0]->Derivative(x, cv);
 }
-void Model::ComputeRCDiatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  const double x[4] = {tt, tr, tv, te};
-  networks_[0]->Derivative2(x, cv);
-}
 double Model::ComputeVEDiatomic(const double &tt, const double &tr, const double &tv, const double &te)
 {
   const double x[4] = {tt, tr, tv, te};
@@ -225,11 +159,6 @@ void Model::ComputeVCDiatomic(double *cv, const double &tt, const double &tr, co
 {
   const double x[4] = {tt, tr, tv, te};
   networks_[1]->Derivative(x, cv);
-}
-void Model::ComputeVCDiatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  const double x[4] = {tt, tr, tv, te};
-  networks_[1]->Derivative2(x, cv);
 }
 double Model::ComputeEEDiatomic(const double &tt, const double &tr, const double &tv, const double &te)
 {
@@ -243,11 +172,6 @@ void Model::ComputeECDiatomic(double *cv, const double &tt, const double &tr, co
   const double x[4] = {tt, tr, tv, te};
   networks_[2]->Derivative(x, cv);
 }
-void Model::ComputeECDiatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  const double x[4] = {tt, tr, tv, te};
-  networks_[2]->Derivative2(x, cv);
-}
 
 double Model::ComputeTEPolyatomic(const double &tt, const double &tr, const double &tv, const double &te)
 {
@@ -258,21 +182,11 @@ void Model::ComputeTCPolyatomic(double *cv, const double &tt, const double &tr, 
   cv[0] = 1.5 * R_ / species_weight_;
   cv[1] = cv[2] = cv[3] = 0.0;
 }
-void Model::ComputeTCPolyatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = 1.5 * R_ / species_weight_;
-  cv[1] = cv[2] = cv[3] = 0.0;
-}
 double Model::ComputeREPolyatomic(const double &tt, const double &tr, const double &tv, const double &te)
 {
   return R_ * tr / species_weight_;
 }
 void Model::ComputeRCPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[1] = R_ / species_weight_;
-  cv[0] = cv[2] = cv[3] = 0.0;
-}
-void Model::ComputeRCPolyatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   cv[1] = R_ / species_weight_;
   cv[0] = cv[2] = cv[3] = 0.0;
@@ -289,19 +203,6 @@ double Model::ComputeVEPolyatomic(const double &tt, const double &tr, const doub
   return E;
 }
 void Model::ComputeVCPolyatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  double       arg = 0.0;
-  const double Rs  = R_ / species_weight_;
-  for (int ivib = 0; ivib < thetv_[species_index_].size(); ivib++)
-  {
-    const double tratio  = thetv_[species_index_][ivib] / tv;
-    const double tratio2 = tratio * tratio;
-    arg += Rs * tratio2 * exp(tratio) / ((exp(tratio) - 1.0) * (exp(tratio) - 1.0));
-  }
-  cv[0] = cv[1] = cv[3] = 0.0;
-  cv[2]                 = arg;
-}
-void Model::ComputeVCPolyatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   double       arg = 0.0;
   const double Rs  = R_ / species_weight_;
@@ -350,29 +251,6 @@ void Model::ComputeECPolyatomic(double *cv, const double &tt, const double &tr, 
   cv[0] = cv[1] = cv[2] = 0.0;
   cv[3]                 = arg;
 }
-void Model::ComputeECPolyatomic2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  const double Rs      = R_ / species_weight_;
-  const double tve_inv = 1.0 / te;
-
-  double qs  = 0.0;
-  double qs1 = 0.0;
-  double qs2 = 0.0;
-  double qs3 = 0.0;
-  double qs4 = 0.0;
-  for (int iele = 0; iele < thetel_[species_index_].size(); iele++)
-  {
-    qs = ge_[species_index_][iele] * exp(-thetel_[species_index_][iele] * tve_inv);
-    qs1 += qs * thetel_[species_index_][iele];
-    qs2 += qs;
-    qs3 += qs * thetel_[species_index_][iele] * thetel_[species_index_][iele] * tve_inv * tve_inv;
-    qs4 += qs * thetel_[species_index_][iele] * tve_inv * tve_inv;
-  }
-  const double arg = (qs3 * qs2 - qs1 * qs4) / qs2 / qs2 * Rs;
-
-  cv[0] = cv[1] = cv[2] = 0.0;
-  cv[3]                 = arg;
-}
 
 double Model::ComputeTEElectron(const double &tt, const double &tr, const double &tv, const double &te)
 {
@@ -383,44 +261,18 @@ void Model::ComputeTCElectron(double *cv, const double &tt, const double &tr, co
   cv[0] = cv[1] = cv[2] = 0.0;
   cv[3]                 = 1.5 * R_ / species_weight_;
 }
-void Model::ComputeTCElectron2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = cv[1] = cv[2] = 0.0;
-  cv[3]                 = 1.5 * R_ / species_weight_;
-}
-double Model::ComputeREElectron(const double &tt, const double &tr, const double &tv, const double &te)
-{
-  return 0.0;
-}
-void Model::ComputeRCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+double Model::ComputeREElectron(const double &tt, const double &tr, const double &tv, const double &te) { return 0.0; }
+void   Model::ComputeRCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
 }
-void Model::ComputeRCElectron2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+double Model::ComputeVEElectron(const double &tt, const double &tr, const double &tv, const double &te) { return 0.0; }
+void   Model::ComputeVCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
 }
-double Model::ComputeVEElectron(const double &tt, const double &tr, const double &tv, const double &te)
-{
-  return 0.0;
-}
-void Model::ComputeVCElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
-}
-void Model::ComputeVCElectron2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
-}
-double Model::ComputeEEElectron(const double &tt, const double &tr, const double &tv, const double &te)
-{
-  return 0.0;
-}
-void Model::ComputeECElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
-{
-  cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
-}
-void Model::ComputeECElectron2(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
+double Model::ComputeEEElectron(const double &tt, const double &tr, const double &tv, const double &te) { return 0.0; }
+void   Model::ComputeECElectron(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   cv[0] = cv[1] = cv[2] = cv[3] = 0.0;
 }
