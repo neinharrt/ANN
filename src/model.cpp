@@ -38,7 +38,7 @@ bool Model::Init(const char *species_name)
       {
         networks_[i] = std::static_pointer_cast<NeuralNetworkAtom>(std::make_shared<NeuralNetwork>());
         bool nflag   = networks_[i]->Init(i, species_name_);
-        if (!nflag) std::cout << "Failed to initialize neural network for species " << species_name_ << std::endl;
+        if (!nflag) std::cout << "Failed to initialize neural networks for species " << species_name_ << std::endl;
       }
       break;
     }
@@ -57,7 +57,8 @@ bool Model::Init(const char *species_name)
       for (int i = 0; i < 3; i++)
       {
         networks_[i] = std::static_pointer_cast<NeuralNetworkDiatomic>(std::make_shared<NeuralNetwork>());
-        networks_[i]->Init(i, species_name_);
+        bool nflag   = networks_[i]->Init(i, species_name_);
+        if (!nflag) std::cout << "Failed to initialize neural networks for species " << species_name_ << std::endl;
       }
       break;
     case 2:  // Polyatomic molecules
@@ -86,6 +87,7 @@ bool Model::Init(const char *species_name)
 
       networks_.resize(0);
       break;
+
     default:  // Other species (error)
       break;
   }
@@ -116,15 +118,16 @@ double Model::ComputeEEAtom(const double &tt, const double &tr, const double &tv
   const double x[4] = {tt, tr, tv, te};
   double       lnE;
   networks_[0]->Pred(x, &lnE);
-  return erg2J * exp(lnE);
+  return exp(lnE);
 }
 void Model::ComputeECAtom(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
   double lnE;
   networks_[0]->Pred(te, &lnE);
-  lnE = erg2J * exp(lnE);
+  lnE = exp(lnE);
   networks_[0]->Derivative(te, cv);
-  for (int i = 0; i < 4; i++) { cv[i] *= lnE * species_weight_ / R_; }
+  cv[0] = cv[1] = cv[2] = 0.0;
+  cv[3] *= lnE * species_weight_ / R_;
 }
 
 double Model::ComputeTEDiatomic(const double &tt, const double &tr, const double &tv, const double &te)
@@ -141,7 +144,7 @@ double Model::ComputeREDiatomic(const double &tt, const double &tr, const double
   const double x[4] = {tt, tr, tv, te};
   double       lnE;
   networks_[0]->Pred(x, &lnE);
-  return erg2J * exp(lnE);
+  return exp(lnE);
 }
 void Model::ComputeRCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
@@ -153,7 +156,7 @@ double Model::ComputeVEDiatomic(const double &tt, const double &tr, const double
   const double x[4] = {tt, tr, tv, te};
   double       lnE;
   networks_[1]->Pred(x, &lnE);
-  return erg2J * exp(lnE);
+  return exp(lnE);
 }
 void Model::ComputeVCDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
@@ -165,7 +168,7 @@ double Model::ComputeEEDiatomic(const double &tt, const double &tr, const double
   const double x[4] = {tt, tr, tv, te};
   double       lnE;
   networks_[2]->Pred(x, &lnE);
-  return erg2J * exp(lnE);
+  return exp(lnE);
 }
 void Model::ComputeECDiatomic(double *cv, const double &tt, const double &tr, const double &tv, const double &te)
 {
