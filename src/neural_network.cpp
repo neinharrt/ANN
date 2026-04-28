@@ -9,18 +9,20 @@ namespace fs = std::filesystem;
 
 namespace ANN
 {
-NeuralNetwork::NeuralNetwork()
-    : m(num_hidden_),
-      num_hidden_(0),
-      num_parameter_(0),
-      weights_(),
-      x1_log_(false),
-      x2_log_(false),
-      y_log_(true),
-      Ao_(nullptr),
-      bo_(nullptr),
-      Ai_(nullptr),
-      bi_(nullptr) {}
+NeuralNetwork::NeuralNetwork() :
+    m(num_hidden_),
+    num_hidden_(0),
+    num_parameter_(0),
+    weights_(),
+    x1_log_(false),
+    x2_log_(false),
+    y_log_(true),
+    Ao_(nullptr),
+    bo_(nullptr),
+    Ai_(nullptr),
+    bi_(nullptr)
+{
+}
 
 bool NeuralNetwork::Init(const int &molecule_flag, const int &mode_index, const std::string &species_name)
 {
@@ -86,10 +88,7 @@ void NeuralNetwork::Derivative(const double *x, double *dfdx) const
     dfdx[1] += (temp * Ai_[i * 2 + 1]);
   }
 }
-inline double NeuralNetwork::Transfer(const double input) const
-{
-  return 2.0 / (1.0 + std::exp(-2.0 * input)) - 1.0;
-}
+inline double NeuralNetwork::Transfer(const double input) const { return 2.0 / (1.0 + std::exp(-2.0 * input)) - 1.0; }
 inline double NeuralNetwork::DiffTransfer(const double input) const
 {
   const double s = Transfer(input);

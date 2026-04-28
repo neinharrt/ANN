@@ -193,18 +193,27 @@ const std::vector<std::vector<double>> ge = {
     {1.000E+00},                                                                    // H2
     {4.000E+00, 8.000E+00, 2.000E+00, 4.000E+00, 4.000E+00, 4.000E+00, 2.000E+00, 4.000E+00,
      2.000E+00, 4.000E+00, 2.000E+00, 4.000E+00, 2.000E+00, 2.000E+00, 2.000E+00, 4.000E+00,
-     2.000E+00, 4.000E+00, 2.000E+00, 4.000E+00, 2.000E+00, 2.000E+00},  // NO
-    {1.000E+00},                                                         // NH
-    {1.000E+00},                                                         // OH
-    {1.000E+00},                                                         // CN
-    {1.000E+00},                                                         // CO
-    {1.000E+00},                                                         // CH
-    {1.000E+00},                                                         // SiO
-    {1.000E+00},                                                         // N2p
-    {1.000E+00},                                                         // O2p
-    {1.000E+00},                                                         // NOp
-    {1.000E+00},                                                         // CNp
-    {1.000E+00},                                                         // COp
+     2.000E+00, 4.000E+00, 2.000E+00, 4.000E+00, 2.000E+00, 2.000E+00},                                   // NO
+    {1.000E+00},                                                                                          // NH
+    {1.000E+00},                                                                                          // OH
+    {1.000E+00},                                                                                          // CN
+    {1.000E+00},                                                                                          // CO
+    {1.000E+00},                                                                                          // CH
+    {1.000E+00},                                                                                          // SiO
+    {2.000E+00, 4.000E+00, 2.000E+00, 4.000E+00, 2.000E+00},                                              // N2p
+    {4.000E+00, 4.000E+00, 8.000E+00, 4.000E+00, 4.000E+00, 4.000E+00, 4.000E+00, 2.000E+00, 4.000E+00},  // O2p
+    {1.000E+00,
+     3.000E+00,
+     6.000E+00,
+     6.000E+00,
+     3.000E+00,
+     1.000E+00,
+     2.000E+00,
+     2.000E+00,
+     6.000E+00,
+     1.000E+00},  // NOp
+    {1.000E+00},  // CNp
+    {1.000E+00},  // COp
     {1.000E+00,
      6.000E+00,
      6.000E+00,
@@ -318,18 +327,35 @@ const std::vector<std::vector<double>> thetel = {
      7.50750424766000E+04, 7.63769908538853E+04, 8.68505605438498E+04, 8.72312606661061E+04, 8.89163550848006E+04,
      8.98846513141221E+04, 8.99024921361780E+04, 9.05177127419104E+04, 9.27104073236132E+04, 9.62541125432550E+04,
      9.69360923540996E+04, 9.74871435514698E+04, 9.74943374313310E+04, 1.00322970992767E+05, 1.01450971355007E+05,
-     1.01597726504177E+05, 1.02475379847247E+05},  // NO
-    {0.00000000000000E+00},                        // NH
-    {0.00000000000000E+00},                        // OH
-    {0.00000000000000E+00},                        // CN
-    {0.00000000000000E+00},                        // CO
-    {0.00000000000000E+00},                        // CH
-    {0.00000000000000E+00},                        // SiO
-    {0.00000000000000E+00},                        // N2p
-    {0.00000000000000E+00},                        // O2p
-    {0.00000000000000E+00},                        // NOp
-    {0.00000000000000E+00},                        // CNp
-    {0.00000000000000E+00},                        // COp
+     1.01597726504177E+05, 1.02475379847247E+05},                                                    // NO
+    {0.00000000000000E+00},                                                                          // NH
+    {0.00000000000000E+00},                                                                          // OH
+    {0.00000000000000E+00},                                                                          // CN
+    {0.00000000000000E+00},                                                                          // CO
+    {0.00000000000000E+00},                                                                          // CH
+    {0.00000000000000E+00},                                                                          // SiO
+    {0.00000000000000E+00, 1.3189373201E+04, 3.6633349358E+04, 7.5275229493E+04, 9.2957891415E+04},  // N2p
+    {0.00000000000000E+00,
+     2.8387449834E+02,
+     4.7428479287E+04,
+     5.8514835962E+04,
+     7.1295231332E+04,
+     7.7148254440E+04,
+     9.0255688195E+04,
+     9.5995046400E+04,
+     1.4519468386E+05},  // O2p
+    {0.00000000000000E+00,
+     7.5090775815E+04,
+     8.5234289314E+04,
+     8.9032711390E+04,
+     9.7435281437E+04,
+     1.0005389060E+05,
+     1.0280199142E+05,
+     1.0571083455E+05,
+     1.4500188516E+05,
+     1.5740430876E+05},      // NOp
+    {0.00000000000000E+00},  // CNp
+    {0.00000000000000E+00},  // COp
     {0.00000000000000E+00,
      2.01428636114430E+04,
      3.09336834032880E+04,
@@ -371,6 +397,11 @@ const std::vector<bool> molecule_flag = {false, false, false, false, false, fals
                                          true,  true,  true,  true,  true,  true,  true};
 
 const double R = 8.31446261815324;  // Universal gas constant (J/K-mol)
+
+double computeTraEnergyRRHO(const int &ispecies, const double &ttr, const double &tve);
+double computeRotEnergyRRHO(const int &ispecies, const double &ttr, const double &tve);
+double computeVibEnergyRRHO(const int &ispecies, const double &ttr, const double &tve);
+double computeEleEnergyRRHO(const int &ispecies, const double &ttr, const double &tve);
 
 int main(void)
 {
@@ -631,14 +662,15 @@ int main(void)
 #endif
 #ifdef TIME
   ispecies                        = 0;
-  const double        max_tr      = 50000.0;
-  const double        max_ve      = 50000.0;
   const double        min_tr      = 50.0;
   const double        min_ve      = 50.0;
+  const double        max_tr      = 50000.0;
+  const double        max_ve      = 50000.0;
   const double        tr_interval = 50.0;
   const double        ve_interval = 50.0;
   const int           num_tr      = int((max_tr - min_tr) / tr_interval) + 1;
   const int           num_ve      = int((max_ve - min_ve) / ve_interval) + 1;
+  const int           max_iter    = 100;
   std::vector<double> modes;
   modes.reserve(num_tr * num_ve);
 
@@ -650,276 +682,219 @@ int main(void)
     double mean_total   = 0.0;
     double median_total = 0.0;
     std::cout << "ANN, " << species.second << std::endl;
-    for (int itr = 0; itr < num_tr; itr++)
+    std::vector<double> mean_t_ann;
+    double              et_ann_tmp = 0.0;
+    for (int i = 0; i < max_iter; i++)
     {
-      const double ttr = min_tr + itr * tr_interval;
-      for (int ive = 0; ive < num_ve; ive++)
+      std::vector<double> modes;
+      for (int itr = 0; itr < num_tr; itr++)
       {
-        const double tve    = min_ve + ive * ve_interval;
-        auto         t0     = clock::now();
-        const double et_ann = models[ispecies]->ComputeTranslationalEnergy(ttr, tve);
-        auto         t1     = clock::now();
-        auto         ns     = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        modes.push_back(static_cast<double>(ns));
+        const double ttr = min_tr + itr * tr_interval;
+        for (int ive = 0; ive < num_ve; ive++)
+        {
+          const double tve    = min_ve + ive * ve_interval;
+          auto         t0     = clock::now();
+          const double et_ann = models[ispecies]->ComputeTranslationalEnergy(ttr, tve);
+          et_ann_tmp          = et_ann;
+          auto t1             = clock::now();
+          auto ns             = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+          modes.push_back(static_cast<double>(ns));
+        }
       }
+      const double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
+      mean_t_ann.push_back(mean_ns);
     }
-    double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
-    std::nth_element(modes.begin(), modes.begin() + modes.size() / 2, modes.end());
-    double      median_ns;
-    std::size_t mid = modes.size() / 2;
-    if (modes.size() % 2) { median_ns = modes[mid]; }
-    else
-    {
-      double lower = *std::max_element(modes.begin(), modes.begin() + mid);
-      double upper = modes[mid];
-      median_ns    = 0.5 * (lower + upper);
-    }
-    mean_total += mean_ns;
-    median_total += median_ns;
-    std::cout << "Average time for calculating trans-energy of " << species.second << " using ANN: " << mean_ns
+    double mean_t_ann_mean = std::accumulate(mean_t_ann.begin(), mean_t_ann.end(), 0.0) / mean_t_ann.size();
+    std::cout << "Average time for calculating tra-energy of " << species.second << " using ANN: " << mean_t_ann_mean
               << " ns\n";
-    std::cout << "Median time for calculating trans-energy of " << species.second << " using ANN: " << median_ns
-              << " ns\n";
-    modes.resize(0);
-    for (int itr = 0; itr < num_tr; itr++)
+    std::vector<double> mean_r_ann;
+    double              er_ann_tmp = 0.0;
+    for (int i = 0; i < max_iter; i++)
     {
-      const double ttr = min_tr + itr * tr_interval;
-      for (int ive = 0; ive < num_ve; ive++)
+      std::vector<double> modes;
+      for (int itr = 0; itr < num_tr; itr++)
       {
-        const double tve    = min_ve + ive * ve_interval;
-        auto         t0     = clock::now();
-        const double er_ann = models[ispecies]->ComputeRotationalEnergy(ttr, tve);
-        auto         t1     = clock::now();
-        auto         ns     = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        modes.push_back(static_cast<double>(ns));
+        const double ttr = min_tr + itr * tr_interval;
+        for (int ive = 0; ive < num_ve; ive++)
+        {
+          const double tve    = min_ve + ive * ve_interval;
+          auto         t0     = clock::now();
+          const double er_ann = models[ispecies]->ComputeRotationalEnergy(ttr, tve);
+          er_ann_tmp          = er_ann;
+          auto t1             = clock::now();
+          auto ns             = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+          modes.push_back(static_cast<double>(ns));
+        }
       }
+      const double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
+      mean_r_ann.push_back(mean_ns);
     }
-    mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
-    std::nth_element(modes.begin(), modes.begin() + modes.size() / 2, modes.end());
-    mid = modes.size() / 2;
-    if (modes.size() % 2) { median_ns = modes[mid]; }
-    else
-    {
-      double lower = *std::max_element(modes.begin(), modes.begin() + mid);
-      double upper = modes[mid];
-      median_ns    = 0.5 * (lower + upper);
-    }
-    mean_total += mean_ns;
-    median_total += median_ns;
-    std::cout << "Average time for calculating rot-energy of " << species.second << " using ANN: " << mean_ns
+    double mean_r_ann_mean = std::accumulate(mean_r_ann.begin(), mean_r_ann.end(), 0.0) / mean_r_ann.size();
+    std::cout << "Average time for calculating rot-energy of " << species.second << " using ANN: " << mean_r_ann_mean
               << " ns\n";
-    std::cout << "Median time for calculating rot-energy of " << species.second << " using ANN: " << median_ns
-              << " ns\n";
-    modes.resize(0);
-    for (int itr = 0; itr < num_tr; itr++)
+    std::vector<double> mean_v_ann;
+    double              ev_ann_tmp;
+    for (int i = 0; i < max_iter; i++)
     {
-      const double ttr = min_tr + itr * tr_interval;
-      for (int ive = 0; ive < num_ve; ive++)
+      std::vector<double> modes;
+      for (int itr = 0; itr < num_tr; itr++)
       {
-        const double tve    = min_ve + ive * ve_interval;
-        auto         t0     = clock::now();
-        const double ev_ann = models[ispecies]->ComputeVibrationalEnergy(ttr, tve);
-        auto         t1     = clock::now();
-        auto         ns     = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        modes.push_back(static_cast<double>(ns));
+        const double ttr = min_tr + itr * tr_interval;
+        for (int ive = 0; ive < num_ve; ive++)
+        {
+          const double tve    = min_ve + ive * ve_interval;
+          auto         t0     = clock::now();
+          const double ev_ann = models[ispecies]->ComputeVibrationalEnergy(ttr, tve);
+          ev_ann_tmp          = ev_ann;
+          auto t1             = clock::now();
+          auto ns             = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+          modes.push_back(static_cast<double>(ns));
+        }
       }
+      const double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
+      mean_v_ann.push_back(mean_ns);
     }
-    mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
-    std::nth_element(modes.begin(), modes.begin() + modes.size() / 2, modes.end());
-    mid = modes.size() / 2;
-    if (modes.size() % 2) { median_ns = modes[mid]; }
-    else
-    {
-      double lower = *std::max_element(modes.begin(), modes.begin() + mid);
-      double upper = modes[mid];
-      median_ns    = 0.5 * (lower + upper);
-    }
-    mean_total += mean_ns;
-    median_total += median_ns;
-    std::cout << "Average time for calculating vibra-energy of " << species.second << " using ANN: " << mean_ns
+    double mean_v_ann_mean = std::accumulate(mean_v_ann.begin(), mean_v_ann.end(), 0.0) / mean_v_ann.size();
+    std::cout << "Average time for calculating vib-energy of " << species.second << " using ANN: " << mean_v_ann_mean
               << " ns\n";
-    std::cout << "Median time for calculating vibra-energy of " << species.second << " using ANN: " << median_ns
-              << " ns\n";
-    modes.resize(0);
-    for (int itr = 0; itr < num_tr; itr++)
+    std::vector<double> mean_e_ann;
+    double              ee_ann_tmp;
+    for (int i = 0; i < max_iter; i++)
     {
-      const double ttr = min_tr + itr * tr_interval;
-      for (int ive = 0; ive < num_ve; ive++)
+      std::vector<double> modes;
+      for (int itr = 0; itr < num_tr; itr++)
       {
-        const double tve    = min_ve + ive * ve_interval;
-        auto         t0     = clock::now();
-        const double ee_ann = models[ispecies]->ComputeElectronicEnergy(ttr, tve);
-        auto         t1     = clock::now();
-        auto         ns     = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        modes.push_back(static_cast<double>(ns));
+        const double ttr = min_tr + itr * tr_interval;
+        for (int ive = 0; ive < num_ve; ive++)
+        {
+          const double tve    = min_ve + ive * ve_interval;
+          auto         t0     = clock::now();
+          const double ee_ann = models[ispecies]->ComputeElectronicEnergy(ttr, tve);
+          ee_ann_tmp          = ee_ann;
+          auto t1             = clock::now();
+          auto ns             = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+          modes.push_back(static_cast<double>(ns));
+        }
       }
+      const double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
+      mean_e_ann.push_back(mean_ns);
     }
-    mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
-    std::nth_element(modes.begin(), modes.begin() + modes.size() / 2, modes.end());
-    mid = modes.size() / 2;
-    if (modes.size() % 2) { median_ns = modes[mid]; }
-    else
-    {
-      double lower = *std::max_element(modes.begin(), modes.begin() + mid);
-      double upper = modes[mid];
-      median_ns    = 0.5 * (lower + upper);
-    }
-    mean_total += mean_ns;
-    median_total += median_ns;
-    std::cout << "Average time for calculating elec-energy of " << species.second << " using ANN: " << mean_ns
+    double mean_e_ann_mean = std::accumulate(mean_e_ann.begin(), mean_e_ann.end(), 0.0) / mean_e_ann.size();
+    std::cout << "Average time for calculating ele-energy of " << species.second << " using ANN: " << mean_e_ann_mean
               << " ns\n";
-    std::cout << "Median time for calculating elec-energy of " << species.second << " using ANN: " << median_ns
-              << " ns\n";
-    std::cout << "Average total elapsed time for calculating internal energy of " << species.second
-              << " using ANN: " << mean_total << " ns\n";
-    std::cout << "Median total elapsed time for calculating internal energy of " << species.second
-              << " using ANN: " << median_total << " ns\n";
 
     std::cout << "RRHO, " << species.second << std::endl;
-    mean_total   = 0.0;
-    median_total = 0.0;
-    modes.resize(0);
-    const int index = species.first - 1;
-    for (int itr = 0; itr < num_tr; itr++)
+    mean_total                = 0.0;
+    const int           index = species.first - 1;
+    std::vector<double> mean_t_rrho;
+    double              et_rrho_tmp;
+    for (int i = 0; i < max_iter; i++)
     {
-      const double ttr = min_tr + itr * tr_interval;
-      for (int ive = 0; ive < num_ve; ive++)
+      std::vector<double> modes;
+      for (int itr = 0; itr < num_tr; itr++)
       {
-        const double tve    = min_ve + ive * ve_interval;
-        auto         t0     = clock::now();
-        const double et_ann = 1.5 * R / species_weight[index] * ttr;
-        auto         t1     = clock::now();
-        auto         ns     = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        modes.push_back(static_cast<double>(ns));
-      }
-    }
-
-    mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
-    std::nth_element(modes.begin(), modes.begin() + modes.size() / 2, modes.end());
-    mid = modes.size() / 2;
-    if (modes.size() % 2) { median_ns = modes[mid]; }
-    else
-    {
-      double lower = *std::max_element(modes.begin(), modes.begin() + mid);
-      double upper = modes[mid];
-      median_ns    = 0.5 * (lower + upper);
-    }
-    mean_total += mean_ns;
-    median_total += median_ns;
-
-    std::cout << "Average time for calculating trans-energy of " << species.second << " using RRHO: " << mean_ns
-              << " ns\n";
-    std::cout << "Median time for calculating trans-energy of " << species.second << " using RRHO: " << median_ns
-              << " ns\n";
-    modes.resize(0);
-    for (int itr = 0; itr < num_tr; itr++)
-    {
-      const double ttr = min_tr + itr * tr_interval;
-      for (int ive = 0; ive < num_ve; ive++)
-      {
-        const double tve    = min_ve + ive * ve_interval;
-        auto         t0     = clock::now();
-        const double er_ann = R / species_weight[index] * ttr;
-        auto         t1     = clock::now();
-        auto         ns     = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        modes.push_back(static_cast<double>(ns));
-      }
-    }
-
-    mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
-    std::nth_element(modes.begin(), modes.begin() + modes.size() / 2, modes.end());
-    mid = modes.size() / 2;
-    if (modes.size() % 2) { median_ns = modes[mid]; }
-    else
-    {
-      double lower = *std::max_element(modes.begin(), modes.begin() + mid);
-      double upper = modes[mid];
-      median_ns    = 0.5 * (lower + upper);
-    }
-    mean_total += mean_ns;
-    median_total += median_ns;
-
-    std::cout << "Average time for calculating rot-energy of " << species.second << " using RRHO: " << mean_ns
-              << " ns\n";
-    std::cout << "Median time for calculating rot-energy of " << species.second << " using RRHO: " << median_ns
-              << " ns\n";
-    modes.resize(0);
-    for (int itr = 0; itr < num_tr; itr++)
-    {
-      const double ttr = min_tr + itr * tr_interval;
-      for (int ive = 0; ive < num_ve; ive++)
-      {
-        const double tve    = min_ve + ive * ve_interval;
-        auto         t0     = clock::now();
-        const double ev_ann = R / species_weight[index] * thetv[index][0] / (exp(thetv[index][0] / tve) - 1.0);
-        auto         t1     = clock::now();
-        auto         ns     = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        modes.push_back(static_cast<double>(ns));
-      }
-    }
-
-    mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
-    std::nth_element(modes.begin(), modes.begin() + modes.size() / 2, modes.end());
-    mid = modes.size() / 2;
-    if (modes.size() % 2) { median_ns = modes[mid]; }
-    else
-    {
-      double lower = *std::max_element(modes.begin(), modes.begin() + mid);
-      double upper = modes[mid];
-      median_ns    = 0.5 * (lower + upper);
-    }
-    mean_total += mean_ns;
-    median_total += median_ns;
-
-    std::cout << "Average time for calculating vibra-energy of " << species.second << " using RRHO: " << mean_ns
-              << " ns\n";
-    std::cout << "Median time for calculating vibra-energy of " << species.second << " using RRHO: " << median_ns
-              << " ns\n";
-    modes.resize(0);
-    for (int itr = 0; itr < num_tr; itr++)
-    {
-      const double ttr = min_tr + itr * tr_interval;
-      for (int ive = 0; ive < num_ve; ive++)
-      {
-        const double tve = min_ve + ive * ve_interval;
-        auto         t0  = clock::now();
-        double       num = 0.0;
-        double       den = 0.0;
-        den += ge[index][0] * exp(-thetel[index][0] / tve);
-        for (int i = 1; i < thetel[index].size(); i++)
+        const double ttr = min_tr + itr * tr_interval;
+        for (int ive = 0; ive < num_ve; ive++)
         {
-          num += ge[index][i] * thetel[index][i] * exp(-thetel[index][i] / tve);
-          den += ge[index][i] * exp(-thetel[index][i] / tve);
+          const double tve    = min_ve + ive * ve_interval;
+          auto         t0     = clock::now();
+          const double et_ann = computeTraEnergyRRHO(index, ttr, tve);
+          et_rrho_tmp         = et_ann;
+          auto t1             = clock::now();
+          auto ns             = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+          modes.push_back(static_cast<double>(ns));
         }
-        const double ee_ann = R / species_weight[index] * num / den;
-        auto         t1     = clock::now();
-        auto         ns     = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        modes.push_back(static_cast<double>(ns));
       }
-    }
 
-    mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
-    std::nth_element(modes.begin(), modes.begin() + modes.size() / 2, modes.end());
-    mid = modes.size() / 2;
-    if (modes.size() % 2) { median_ns = modes[mid]; }
-    else
+      const double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
+      mean_t_rrho.push_back(mean_ns);
+    }
+    double mean_t_rrho_mean = std::accumulate(mean_t_rrho.begin(), mean_t_rrho.end(), 0.0) / mean_t_rrho.size();
+    std::cout << "Average time for calculating tra-energy of " << species.second << " using RRHO: " << mean_t_rrho_mean
+              << " ns\n";
+    std::vector<double> mean_r_rrho;
+    double              er_rrho_tmp;
+    for (int i = 0; i < max_iter; i++)
     {
-      double lower = *std::max_element(modes.begin(), modes.begin() + mid);
-      double upper = modes[mid];
-      median_ns    = 0.5 * (lower + upper);
-    }
-    mean_total += mean_ns;
-    median_total += median_ns;
+      std::vector<double> modes;
+      for (int itr = 0; itr < num_tr; itr++)
+      {
+        const double ttr = min_tr + itr * tr_interval;
+        for (int ive = 0; ive < num_ve; ive++)
+        {
+          const double tve    = min_ve + ive * ve_interval;
+          auto         t0     = clock::now();
+          const double er_ann = computeRotEnergyRRHO(index, ttr, tve);
+          er_rrho_tmp         = er_ann;
+          auto t1             = clock::now();
+          auto ns             = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+          modes.push_back(static_cast<double>(ns));
+        }
+      }
 
-    std::cout << "Average time for calculating elec-energy of " << species.second << " using RRHO: " << mean_ns
+      const double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
+      mean_r_rrho.push_back(mean_ns);
+    }
+    double mean_r_rrho_mean = std::accumulate(mean_r_rrho.begin(), mean_r_rrho.end(), 0.0) / mean_r_rrho.size();
+    std::cout << "Average time for calculating rot-energy of " << species.second << " using RRHO: " << mean_r_rrho_mean
               << " ns\n";
-    std::cout << "Median time for calculating elec-energy of " << species.second << " using RRHO: " << median_ns
+    std::vector<double> mean_v_rrho;
+    double              ev_rrho_tmp;
+    for (int i = 0; i < max_iter; i++)
+    {
+      std::vector<double> modes;
+      for (int itr = 0; itr < num_tr; itr++)
+      {
+        const double ttr = min_tr + itr * tr_interval;
+        for (int ive = 0; ive < num_ve; ive++)
+        {
+          const double tve    = min_ve + ive * ve_interval;
+          auto         t0     = clock::now();
+          const double ev_ann = computeVibEnergyRRHO(index, ttr, tve);
+          ev_rrho_tmp         = ev_ann;
+          auto t1             = clock::now();
+          auto ns             = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+          modes.push_back(static_cast<double>(ns));
+        }
+      }
+
+      const double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
+      mean_v_rrho.push_back(mean_ns);
+    }
+    double mean_v_rrho_mean = std::accumulate(mean_v_rrho.begin(), mean_v_rrho.end(), 0.0) / mean_v_rrho.size();
+    std::cout << "Average time for calculating vib-energy of " << species.second << " using RRHO: " << mean_v_rrho_mean
               << " ns\n";
-    modes.resize(0);
-    std::cout << "Averaged total elapsed time for calculating internal energy of " << species.second
-              << " using RRHO: " << mean_total << " ns\n";
-    std::cout << "Median total elapsed time for calculating internal energy of " << species.second
-              << " using RRHO: " << median_total << " ns\n";
+    std::vector<double> mean_e_rrho;
+    double              ee_rrho_tmp;
+    for (int i = 0; i < max_iter; i++)
+    {
+      std::vector<double> modes;
+      for (int itr = 0; itr < num_tr; itr++)
+      {
+        const double ttr = min_tr + itr * tr_interval;
+        for (int ive = 0; ive < num_ve; ive++)
+        {
+          const double tve    = min_ve + ive * ve_interval;
+          auto         t0     = clock::now();
+          const double ee_ann = computeEleEnergyRRHO(index, ttr, tve);
+          ee_rrho_tmp         = ee_ann;
+          auto t1             = clock::now();
+          auto ns             = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
+          modes.push_back(static_cast<double>(ns));
+        }
+      }
+      const double mean_ns = std::accumulate(modes.begin(), modes.end(), 0.0) / modes.size();
+      mean_e_rrho.push_back(mean_ns);
+    }
+    double mean_e_rrho_mean = std::accumulate(mean_e_rrho.begin(), mean_e_rrho.end(), 0.0) / mean_e_rrho.size();
+    std::cout << "Average time for calculating ele-energy of " << species.second << " using RRHO: " << mean_e_rrho_mean
+              << " ns\n";
+
+    // std::cout << "tra-energy = " << et_ann_tmp << ", " << et_rrho_tmp << std::endl;
+    // std::cout << "rot-energy = " << er_ann_tmp << ", " << er_rrho_tmp << std::endl;
+    // std::cout << "vib-energy = " << ev_ann_tmp << ", " << ev_rrho_tmp << std::endl;
+    // std::cout << "ele-energy = " << ee_ann_tmp << ", " << ee_rrho_tmp << std::endl;
+    ispecies++;
   }
 #endif
 #ifdef VALID
@@ -956,9 +931,13 @@ int main(void)
       ese_vec.push_back(ese_tmp);
     }
     std::vector<double> esr_err, esv_err, ese_err;
+    std::vector<double> esr_pred, esv_pred, ese_pred;
     esr_err.resize(N, 0.0);
     esv_err.resize(N, 0.0);
     ese_err.resize(N, 0.0);
+    esr_pred.resize(N, 0.0);
+    esv_pred.resize(N, 0.0);
+    ese_pred.resize(N, 0.0);
 
     if (!molecule_flag[ispecies])  // Atoms
     {
@@ -985,16 +964,16 @@ int main(void)
         const double esr_exact = esr_vec[i];
         const double esv_exact = esv_vec[i];
         const double ese_exact = ese_vec[i];
-        const double esr_ann   = models[index]->ComputeRotationalEnergy(ttr, tve);
-        const double esv_ann   = models[index]->ComputeVibrationalEnergy(ttr, tve);
-        const double ese_ann   = models[index]->ComputeElectronicEnergy(ttr, tve);
-        esr_err[i]             = std::abs(1.0 - esr_ann / esr_exact) * 100.0;
+        esr_pred[i]            = models[index]->ComputeRotationalEnergy(ttr, tve);
+        esv_pred[i]            = models[index]->ComputeVibrationalEnergy(ttr, tve);
+        ese_pred[i]            = models[index]->ComputeElectronicEnergy(ttr, tve);
+        esr_err[i]             = std::abs(1.0 - esr_pred[i] / esr_exact) * 100.0;
         if (species.second.compare("NO") == 0)
-          esv_err[i] = std::abs(1.0 - esv_ann / (esv_exact * 10000.0)) * 100.0;
+          esv_err[i] = std::abs(1.0 - esv_pred[i] / (esv_exact * 10000.0)) * 100.0;
         else
-          esv_err[i] = std::abs(1.0 - esv_ann / esv_exact) * 100.0;
+          esv_err[i] = std::abs(1.0 - esv_pred[i] / esv_exact) * 100.0;
         if (ese_exact > 1.e-200)
-          ese_err[i] = std::abs(1.0 - ese_ann / ese_exact) * 100.0;
+          ese_err[i] = std::abs(1.0 - ese_pred[i] / ese_exact) * 100.0;
         else
           ese_err[i] = 0.0;
 
@@ -1021,6 +1000,18 @@ int main(void)
                 << "\n";
       }
       outfile.close();
+    }
+    std::string   outfile_name = "./validation/pred_" + species.second + ".dat";
+    std::ofstream outfile2(outfile_name);
+    outfile2 << std::scientific << std::uppercase << std::setprecision(10);
+    if (outfile2.is_open())
+    {
+      for (int i = 0; i < ttr_vec.size(); i++)
+      {
+        outfile2 << ttr_vec[i] << "\t" << tve_vec[i] << "\t" << esr_pred[i] << "\t" << esv_pred[i] << "\t"
+                 << ese_pred[i] << "\n";
+      }
+      outfile2.close();
     }
     const double esr_max_err = *std::max_element(esr_err.begin(), esr_err.end());
     const double esv_max_err = *std::max_element(esv_err.begin(), esv_err.end());
@@ -1076,4 +1067,29 @@ int main(void)
 #endif
 
   return 0;
+}
+
+double computeTraEnergyRRHO(const int &ispecies, const double &ttr, const double &tve)
+{
+  return 1.5 * R / species_weight[ispecies] * ttr;
+}
+double computeRotEnergyRRHO(const int &ispecies, const double &ttr, const double &tve)
+{
+  return R / species_weight[ispecies] * ttr;
+}
+double computeVibEnergyRRHO(const int &ispecies, const double &ttr, const double &tve)
+{
+  return R / species_weight[ispecies] * thetv[ispecies][0] / (exp(thetv[ispecies][0] / tve) - 1.0);
+}
+double computeEleEnergyRRHO(const int &ispecies, const double &ttr, const double &tve)
+{
+  double num = 0.0;
+  double den = 0.0;
+  den += ge[ispecies][0] * exp(-thetel[ispecies][0] / tve);
+  for (int i = 1; i < thetel[ispecies].size(); i++)
+  {
+    num += ge[ispecies][i] * thetel[ispecies][i] * exp(-thetel[ispecies][i] / tve);
+    den += ge[ispecies][i] * exp(-thetel[ispecies][i] / tve);
+  }
+  return R / species_weight[ispecies] * num / den;
 }
